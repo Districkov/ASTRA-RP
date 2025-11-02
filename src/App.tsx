@@ -3,7 +3,7 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./App.css";
-import AstraLogo from "./assets/astra.png";
+import AstraLogo from "./assets/Astra.svg";
 import HomePage from "./pages/HomePage";
 import DonatePage from "./pages/DonatePage";
 
