@@ -8,7 +8,7 @@ import DiscordIcon from "./../assets/DS.svg";
 import VkIcon from "./../assets/Vk.svg";
 import YoutubeIcon from "./../assets/Youtobe.svg";
 import TelegramIcon from "./../assets/telega.svg";
-import { createPayment, type PaymentResponse } from "../services/paymentService";
+
 
 function DonatePage() {
   const navigate = useNavigate();
