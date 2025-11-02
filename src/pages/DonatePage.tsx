@@ -2,13 +2,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DonatePage.css";
-import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, MessageCircle, Users, Play, Send, Loader2, AlertCircle, X } from 'lucide-react';
+import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, Loader2, AlertCircle, X } from 'lucide-react';
 import AstraLogo from "./../assets/astra.png";
 import DiscordIcon from "./../assets/DS.svg";
 import VkIcon from "./../assets/Vk.svg";
 import YoutubeIcon from "./../assets/Youtobe.svg";
 import TelegramIcon from "./../assets/telega.svg";
-
 
 function DonatePage() {
   const navigate = useNavigate();
@@ -58,41 +57,28 @@ function DonatePage() {
     setPaymentStatus({ type: null, message: '' });
 
     try {
-      // Создание платежа через сервис
-      const result: PaymentResponse = await createPayment({
-        email,
-        username,
-        amount,
-        paymentMethod
+      // ЗАГЛУШКА вместо реального платежа
+      console.log('Payment data:', { email, username, amount, paymentMethod });
+      
+      // Имитация обработки платежа
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // В реальном приложении здесь будет вызов API платежного шлюза
+      setPaymentStatus({
+        type: 'success',
+        message: `Платеж на сумму ${amount}₽ успешно создан! В реальном приложении здесь будет редирект на платежный шлюз.`
       });
+      
+      // Очистка формы после успешного платежа (в демо режиме)
+      setTimeout(() => {
+        setEmail('');
+        setUsername('');
+        setAmount(100);
+        setAgreeTerms(false);
+        setAgreePrivacy(false);
+        setPaymentStatus({ type: null, message: '' });
+      }, 5000);
 
-      if (result.success) {
-        if (result.paymentUrl) {
-          // Редирект на страницу оплаты платежного шлюза
-          window.location.href = result.paymentUrl;
-        } else {
-          // Платеж создан, но нет URL (демо режим или другой сценарий)
-          setPaymentStatus({
-            type: 'success',
-            message: result.message || `Платеж на сумму ${amount}₽ успешно создан! Средства будут зачислены автоматически после подтверждения.`
-          });
-          
-          // Очистка формы после успешного платежа
-          setTimeout(() => {
-            setEmail('');
-            setUsername('');
-            setAmount(100);
-            setAgreeTerms(false);
-            setAgreePrivacy(false);
-            setPaymentStatus({ type: null, message: '' });
-          }, 5000);
-        }
-      } else {
-        setPaymentStatus({
-          type: 'error',
-          message: result.error || 'Ошибка создания платежа. Попробуйте позже.'
-        });
-      }
     } catch (error) {
       console.error('Payment error:', error);
       setPaymentStatus({
