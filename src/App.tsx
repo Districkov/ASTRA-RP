@@ -1,128 +1,183 @@
-
-// ========== src/App.tsx ==========
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FC } from "react";
 import "./App.css";
 import AstraLogo from "./assets/Astra.svg";
 import HomePage from "./pages/HomePage";
 import DonatePage from "./pages/DonatePage";
-
-// Импорт иконок из lucide-react
-import { 
+import {
   Home,
   Info,
   Gamepad,
   Newspaper,
   MessageCircle,
   Gem
-} from 'lucide-react';
+} from "lucide-react";
 
-function Navigation() {
+interface NavigationProps {}
+
+const Navigation: FC<NavigationProps> = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<string>("hero");
+  const [showHeaderNav, setShowHeaderNav] = useState<boolean>(true);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       const scrollPosition = window.scrollY || document.documentElement.scrollTop;
       setIsScrolled(scrollPosition > 50);
+
+      if (location.pathname === "/") {
+        const sections = ["hero", "about", "how-to-play", "gallery", "faq"];
+        const scrollPos = window.scrollY + 200;
+        let current = "hero";
+
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const { offsetTop, offsetHeight } = element;
+            if (scrollPos >= offsetTop && scrollPos < offsetTop + offsetHeight) {
+              current = section;
+              break;
+            }
+          }
+        }
+
+        setActiveSection(current);
+        
+        // Хедер показывается ТОЛЬКО на секции hero
+        setShowHeaderNav(current === "hero");
+      }
     };
 
-    // Если мы не на главной странице, navbar всегда должен быть с фоном
-    if (location.pathname !== '/') {
+    if (location.pathname !== "/") {
       setIsScrolled(true);
+      setShowHeaderNav(false);
     } else {
-      window.addEventListener('scroll', handleScroll);
+      window.addEventListener("scroll", handleScroll);
+      handleScroll();
     }
 
     return () => {
-      if (location.pathname === '/') {
-        window.removeEventListener('scroll', handleScroll);
+      if (location.pathname === "/") {
+        window.removeEventListener("scroll", handleScroll);
       }
     };
   }, [location.pathname]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  const scrollToSection = (sectionId: string) => {
-    closeMobileMenu();
-    if (location.pathname !== '/') {
-      navigate('/');
+  const scrollToSection = (sectionId: string): void => {
+    if (location.pathname !== "/") {
+      navigate("/");
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     }
   };
 
+  const handleLogoClick = (): void => {
+    navigate("/");
+  };
+
+  const handleDonateClick = (): void => {
+    navigate("/donate");
+  };
+
+  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string): void => {
+    e.preventDefault();
+    scrollToSection(sectionId);
+  };
+
   return (
     <>
-      <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-        <div className="logo" onClick={() => { navigate('/'); closeMobileMenu(); }} style={{ cursor: 'pointer' }}>
+      {/* HEADER */}
+      <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
+        <div 
+          className="logo" 
+          onClick={handleLogoClick}
+          style={{ cursor: "pointer" }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              handleLogoClick();
+            }
+          }}
+        >
           <img src={AstraLogo} alt="ASTRA RP" />
         </div>
-        <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/'); scrollToSection('hero'); }}>
-            <Home size={18} />
-            Главная
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>
-            <Info size={18} />
-            О Проекте
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); scrollToSection('how-to-play'); }}>
-            <Gamepad size={18} />
-            Как играть
-          </a>
-          <a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>
-            <Newspaper size={18} />
-            Форум
-          </a>
-          <a href="https://discord.gg/astra-rp" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>
-            <MessageCircle size={18} />
-            Discord
-          </a>
-          <button className="donate-btn mobile" onClick={() => { navigate('/donate'); closeMobileMenu(); }}>
-            <Gem size={18} />
-            Пополнить счёт
-          </button>
-        </div>
-        <button className="donate-btn desktop" onClick={() => navigate('/donate')}>
+
+        {/* Навигация показывается ТОЛЬКО на секции hero */}
+        {showHeaderNav && (
+          <div className="nav-links">
+            <a
+              href="#hero"
+              className={activeSection === "hero" ? "active" : ""}
+              onClick={(e) => handleNavLinkClick(e, "hero")}
+            >
+              <Home size={18} />
+              Главная
+            </a>
+            <a
+              href="#about"
+              className={activeSection === "about" ? "active" : ""}
+              onClick={(e) => handleNavLinkClick(e, "about")}
+            >
+              <Info size={18} />
+              О проекте
+            </a>
+            <a
+              href="#how-to-play"
+              className={activeSection === "how-to-play" ? "active" : ""}
+              onClick={(e) => handleNavLinkClick(e, "how-to-play")}
+            >
+              <Gamepad size={18} />
+              Как играть
+            </a>
+            <a
+              href="https://forum.astra-rp.fun"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Newspaper size={18} />
+              Форум
+            </a>
+            <a
+              href="https://t.me/astrarp5"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle size={18} />
+              Discord
+            </a>
+          </div>
+        )}
+
+        {/* Кнопка "Пополнить счёт" — всегда видна */}
+        <button 
+          className="donate-btn desktop" 
+          onClick={handleDonateClick}
+          type="button"
+        >
           <Gem size={18} />
           Пополнить счёт
         </button>
-        <button 
-          className={`burger-menu ${isMobileMenuOpen ? 'open' : ''}`}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
       </nav>
-      {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMobileMenu}></div>
-      )}
     </>
   );
-}
+};
 
-function App() {
+interface AppProps {}
+
+const App: FC<AppProps> = () => {
   return (
     <div className="app">
       <Navigation />
@@ -132,6 +187,6 @@ function App() {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;

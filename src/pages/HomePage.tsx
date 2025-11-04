@@ -1,7 +1,6 @@
 // ========== src/pages/HomePage.tsx ==========
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
-  Star,
   ArrowDown,
   Rocket,
   BookOpen,
@@ -12,15 +11,19 @@ import {
   Users,
   ShoppingCart,
   Download,
-  Gamepad2,
-  Cpu,
-  Shield,
   CheckCircle,
   Image,
-  MapPin,
   ChevronLeft,
   ChevronRight,
-  Video
+  Video,
+  TrendingUp,
+  Clock,
+  ShieldCheck,
+  Users2,
+  Building,
+  Car,
+  Briefcase,
+  Gem
 } from 'lucide-react';
 import backgroundVideo from "../assets/Start.mp4";
 import AstraLogo from "../assets/astra.png";
@@ -29,10 +32,28 @@ import VkIcon from "../assets/Vk.svg";
 import YoutubeIcon from "../assets/Youtobe.svg";
 import TelegramIcon from "../assets/telega.svg";
 
+// Импорты картинок для галереи
+import cityCenter from "../assets/gallery/screenshots/city-center.jpg";
+import criminalDistrict from "../assets/gallery/screenshots/criminal-district.jpg";
+import eliteArea from "../assets/gallery/screenshots/elite-area.jpg";
+import industrialZone from "../assets/gallery/screenshots/industrial-zone.jpg";
+import suburb from "../assets/gallery/screenshots/suburb.jpg";
+import beach from "../assets/gallery/screenshots/beach.jpg";
+import mountains from "../assets/gallery/screenshots/mountains.jpg";
+import airport from "../assets/gallery/screenshots/airport.jpg";
+
 function HomePage() {
   const [copied, setCopied] = useState(false);
   const [currentGalleryImage, setCurrentGalleryImage] = useState(0);
   const [galleryTab, setGalleryTab] = useState<'screenshots' | 'videos'>('screenshots');
+  const [activeSection, setActiveSection] = useState('hero');
+  const [animatedStats, setAnimatedStats] = useState<{ [key: number]: number }>({});
+  const [showRightMenu, setShowRightMenu] = useState(false);
+  
+  const statsRef = useRef<HTMLDivElement>(null);
+  const aboutSectionRef = useRef<HTMLDivElement>(null);
+  const animationStartedRef = useRef(false);
+  const autoPlayRef = useRef<number | null>(null);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -49,56 +70,199 @@ function HomePage() {
 
   // Данные для статистики
   const statsData = [
-    { value: "5,000+", label: "Игроков онлайн" },
-    { value: "24/7", label: "Работа сервера" },
-    { value: "99.8%", label: "Uptime" },
-    { value: "512", label: "Слотов" }
+    { value: 112, label: "Игроков онлайн", suffix: "+", isNumber: true },
+    { value: "24/7", label: "Работа сервера", suffix: "", isNumber: false },
+    { value: 512, label: "Слотов", suffix: "", isNumber: false }
   ];
 
-  // Данные для фич
-  const featuresData = [
+  // Анимация возрастающих цифр
+  useEffect(() => {
+    if (!statsRef.current || animationStartedRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !animationStartedRef.current) {
+            animationStartedRef.current = true;
+            
+            const currentStats = [
+              { value: 112, label: "Игроков онлайн", suffix: "+", isNumber: true },
+              { value: "24/7", label: "Работа сервера", suffix: "", isNumber: false },
+              { value: 512, label: "Слотов", suffix: "", isNumber: false }
+            ];
+
+            currentStats.forEach((stat, index) => {
+              if (stat.isNumber && typeof stat.value === 'number') {
+                const targetValue = stat.value;
+                let current = 0;
+                const increment = targetValue / 50;
+                const duration = 2000;
+                const stepTime = duration / 50;
+
+                const timer = setInterval(() => {
+                  current += increment;
+                  if (current >= targetValue) {
+                    current = targetValue;
+                    clearInterval(timer);
+                  }
+                  setAnimatedStats((prev) => ({
+                    ...prev,
+                    [index]: Math.floor(current)
+                  }));
+                }, stepTime);
+              }
+            });
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(statsRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Автоплей слайдера
+  useEffect(() => {
+    if (galleryTab === 'screenshots') {
+      autoPlayRef.current = window.setInterval(() => {
+        setCurrentGalleryImage((prev) => (prev + 1) % galleryImages.length);
+      }, 4000); // Смена каждые 4 секунды
+    }
+
+    return () => {
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+        autoPlayRef.current = null;
+      }
+    };
+  }, [galleryTab]);
+
+  // Отслеживание активной секции при скролле
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['hero', 'about', 'how-to-play', 'gallery', 'faq'];
+      const scrollPosition = window.scrollY + 200;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+            // Правое меню показывается ТОЛЬКО после hero
+            setShowRightMenu(section !== 'hero');
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Данные для уникальных особенностей
+  const uniqueFeatures = [
     {
-      icon: <Gamepad2 size={32} />,
-      title: "Реалистичный геймплей",
-      description: "Продвинутая экономическая система и глубокие механики RP. Уникальные профессии, динамическая экономика и полноценная система бизнесов."
+      icon: <ShieldCheck size={32} />,
+      title: "Продвинутая система античита",
+      description: "Многоуровневая защита 24/7 с автоматическим баном нарушителей. Ваша игра в полной безопасности.",
+      color: "#ff1e1e"
     },
     {
-      icon: <Users size={32} />,
-      title: "Активное сообщество",
-      description: "Тысячи игроков онлайн 24/7, регулярные ивенты, турниры и конкурсы. Дружелюбная атмосфера и активная поддержка новичков."
+      icon: <TrendingUp size={32} />,
+      title: "Динамическая экономика",
+      description: "Реалистичные цены, инфляция, кризисы и биржевые торги. Экономика, которая живет своей жизнью.",
+      color: "#10b981"
     },
     {
-      icon: <Cpu size={32} />,
-      title: "Современные технологии",
-      description: "Оптимизированные серверы с низкой задержкой, кастомные скрипты, улучшенная графика и стабильная работа без лагов."
+      icon: <Users2 size={32} />,
+      title: "Система фракций",
+      description: "Полиция, EMS, банды, правительство с уникальными механиками для каждой фракции.",
+      color: "#3b82f6"
     },
     {
-      icon: <Shield size={32} />,
-      title: "Защита от читеров",
-      description: "Многоуровневая система античита с мониторингом 24/7, автоматический бан читеров и активная администрация."
+      icon: <Building size={32} />,
+      title: "Недвижимость и бизнесы",
+      description: "Покупайте дома, открывайте бизнесы, управляйте империей. От маленького магазина до корпорации.",
+      color: "#f59e0b"
     },
     {
-      icon: <Rocket size={32} />,
-      title: "Регулярные обновления",
-      description: "Постоянное развитие сервера с новыми функциями, исправлениями и улучшениями. Ваше мнение важно для нас!"
+      icon: <Car size={32} />,
+      title: "Кастомный транспорт",
+      description: "Более 200 уникальных автомобилей с детальной проработкой. Тюнинг и уникальные возможности.",
+      color: "#8b5cf6"
     },
     {
-      icon: <CheckCircle size={32} />,
-      title: "Уникальный контент",
-      description: "Эксклюзивные локации, кастомные машины, оружие и одежда. Сотни часов контента для полного погружения в RP."
+      icon: <Briefcase size={32} />,
+      title: "50+ профессий",
+      description: "От таксиста до пилота, от механика до адвоката. Каждая профессия с уникальной механикой.",
+      color: "#ec4899"
     }
   ];
 
-  // Данные для галереи скриншотов
+  // Данные для статистики проекта
+  const projectStats = [
+    { number: "50+", label: "уникальных профессий", icon: <Briefcase size={24} /> },
+    { number: "200+", label: "кастомных транспорта", icon: <Car size={24} /> },
+    { number: "1000+", label: "игровых предметов", icon: <Gem size={24} /> },
+    { number: "24/7", label: "поддержка", icon: <Clock size={24} /> },
+  ];
+
+  // Данные для галереи скриншотов с реальными картинками
   const galleryImages = [
-    { id: 1, title: "Городской центр", description: "Современный мегаполис с активной жизнью" },
-    { id: 2, title: "Криминальный район", description: "Темные улицы под контролем банд" },
-    { id: 3, title: "Элитный район", description: "Роскошные особняки и виллы" },
-    { id: 4, title: "Промзона", description: "Индустриальные локации для бизнеса" },
-    { id: 5, title: "Пригород", description: "Спокойные районы для семьи" },
-    { id: 6, title: "Пляж", description: "Отдых и развлечения на побережье" },
-    { id: 7, title: "Горы", description: "Природные локации и скрытые места" },
-    { id: 8, title: "Аэропорт", description: "Транспортный узел сервера" }
+    { 
+      id: 1, 
+      title: "Городской центр", 
+      description: "Современный мегаполис с активной жизнью",
+      image: cityCenter
+    },
+    { 
+      id: 2, 
+      title: "Криминальный район", 
+      description: "Темные улицы под контролем банд",
+      image: criminalDistrict
+    },
+    { 
+      id: 3, 
+      title: "Элитный район", 
+      description: "Роскошные особняки и виллы",
+      image: eliteArea
+    },
+    { 
+      id: 4, 
+      title: "Промзона", 
+      description: "Индустриальные локации для бизнеса",
+      image: industrialZone
+    },
+    { 
+      id: 5, 
+      title: "Пригород", 
+      description: "Спокойные районы для семьи",
+      image: suburb
+    },
+    { 
+      id: 6, 
+      title: "Пляж", 
+      description: "Отдых и развлечения на побережье",
+      image: beach
+    },
+    { 
+      id: 7, 
+      title: "Горы", 
+      description: "Природные локации и скрытые места",
+      image: mountains
+    },
+    { 
+      id: 8, 
+      title: "Аэропорт", 
+      description: "Транспортный узел сервера",
+      image: airport
+    }
   ];
 
   // Данные для видео геймплея
@@ -111,26 +275,38 @@ function HomePage() {
     { id: 6, title: "Экономика сервера", description: "Система бизнесов и работы", thumbnail: "💼", youtubeId: "dQw4w9WgXcQ" }
   ];
 
-  // Карта сервера - основные локации
-  const mapLocations = [
-    { id: 1, name: "Центр города", x: 50, y: 50, description: "Основной торговый и деловой район" },
-    { id: 2, name: "LSPD", x: 30, y: 60, description: "Штаб полиции Лос-Сантоса" },
-    { id: 3, name: "EMS", x: 60, y: 40, description: "Медицинская служба" },
-    { id: 4, name: "Порт", x: 80, y: 70, description: "Морской транспортный узел" },
-    { id: 5, name: "Аэропорт", x: 90, y: 20, description: "Международный аэропорт" },
-    { id: 6, name: "Казино", x: 70, y: 50, description: "Развлекательный комплекс" },
-    { id: 7, name: "Тюрьма", x: 20, y: 80, description: "Исправительное учреждение" },
-    { id: 8, name: "Автосалон", x: 40, y: 30, description: "Покупка транспорта" }
-  ];
-
   const nextGalleryImage = () => {
     setCurrentGalleryImage((prev) => (prev + 1) % galleryImages.length);
+    // Сбрасываем автоплей при ручном переключении
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
+    }
+    autoPlayRef.current = window.setInterval(() => {
+      setCurrentGalleryImage((prev) => (prev + 1) % galleryImages.length);
+    }, 4000);
   };
 
   const prevGalleryImage = () => {
     setCurrentGalleryImage((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+    // Сбрасываем автоплей при ручном переключении
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
+    }
+    autoPlayRef.current = window.setInterval(() => {
+      setCurrentGalleryImage((prev) => (prev + 1) % galleryImages.length);
+    }, 4000);
   };
 
+  const goToSlide = (index: number) => {
+    setCurrentGalleryImage(index);
+    // Сбрасываем автоплей при ручном переключении
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
+    }
+    autoPlayRef.current = window.setInterval(() => {
+      setCurrentGalleryImage((prev) => (prev + 1) % galleryImages.length);
+    }, 4000);
+  };
 
   return (
     <>
@@ -150,10 +326,6 @@ function HomePage() {
         </video>
         <div className="hero-overlay"></div>
         <div className="content">
-          <div className="badge">
-            <Star size={16} />
-            ЛУЧШИЙ RP СЕРВЕР 2025
-          </div>
           <h1 className="fade-in">
             Добро пожаловать в <span className="gradient-text">ASTRA RP</span>
           </h1>
@@ -172,10 +344,16 @@ function HomePage() {
             </button>
           </div>
           
-          <div className="hero-stats fade-in delay-3">
+          <div className="hero-stats fade-in delay-3" ref={statsRef}>
             {statsData.map((stat, index) => (
               <div key={index} className="stat">
-                <div className="stat-number">{stat.value}</div>
+                <div className="stat-number">
+                  {stat.isNumber 
+                    ? (typeof stat.value === 'number' 
+                        ? `${animatedStats[index] !== undefined ? animatedStats[index] : 0}${stat.suffix}` 
+                        : stat.value)
+                    : stat.value}
+                </div>
                 <div className="stat-label">{stat.label}</div>
               </div>
             ))}
@@ -188,49 +366,46 @@ function HomePage() {
         </div>
       </section>
 
-          {/* Секция "О проекте" */}
-          <section id="about" className="about-section">
-            <div className="section-container">
-              <div className="section-header">
-                <h2 className="section-title">Почему выбирают ASTRA RP?</h2>
-                <p className="section-subtitle">
-                  Мы создали проект, в котором каждый игрок почувствует себя частью большого живого мира. 
-                  Более 5000 активных игроков ежедневно, стабильная работа 24/7 и постоянно развивающийся контент.
-                </p>
-              </div>
-              
-              <div className="features-grid">
-                {featuresData.map((feature, index) => (
-                  <div key={index} className="feature-card">
-                    <div className="feature-icon">
-                      {feature.icon}
-                    </div>
-                    <h3>{feature.title}</h3>
-                    <p>{feature.description}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Дополнительная информация о сервере */}
-              <div className="about-additional" style={{ marginTop: '4rem', padding: '2rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>Что делает ASTRA RP особенным?</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
-                  <div>
-                    <h4 style={{ color: '#ff1e1e', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Уникальная экономика</h4>
-                    <p style={{ color: '#94a3b8', lineHeight: '1.6' }}>Реалистичная система бизнесов, недвижимости и транспорта. Зарабатывайте честным трудом или создайте криминальную империю!</p>
-                  </div>
-                  <div>
-                    <h4 style={{ color: '#ff1e1e', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Разнообразие профессий</h4>
-                    <p style={{ color: '#94a3b8', lineHeight: '1.6' }}>Более 50 уникальных профессий: от простого водителя до владельца крупного бизнеса. Каждая профессия имеет свою механику и возможности.</p>
-                  </div>
-                  <div>
-                    <h4 style={{ color: '#ff1e1e', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Активные ивенты</h4>
-                    <p style={{ color: '#94a3b8', lineHeight: '1.6' }}>Регулярные события, турниры, розыгрыши призов и специальные акции. Никогда не бывает скучно на ASTRA RP!</p>
+      {/* Секция "О проекте" - ПЕРЕРАБОТАННАЯ */}
+      <section id="about" className="about-section" ref={aboutSectionRef}>
+        <div className="section-container">
+          <div className="section-header">
+            <h2 className="section-title">ASTRA RP — НОВЫЙ СТАНДАРТ GTA ROLEPLAY</h2>
+            <p className="section-subtitle">
+              Самый технологичный и проработанный ролевой проект, объединяющий лучшие черты ведущих RP-серверов 
+              с уникальными инновациями. Здесь каждый найдет свой путь — от законопослушного гражданина до криминального авторитета.
+            </p>
+          </div>
+          
+          {/* Уникальные особенности */}
+          <div className="unique-features-grid">
+            {uniqueFeatures.map((feature, index) => (
+              <div key={index} className="unique-feature-card">
+                <div className="feature-icon-wrapper" style={{ backgroundColor: `${feature.color}20` }}>
+                  <div style={{ color: feature.color }}>
+                    {feature.icon}
                   </div>
                 </div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
               </div>
-            </div>
-          </section>
+            ))}
+          </div>
+
+          {/* Статистика проекта */}
+          <div className="project-stats-grid">
+            {projectStats.map((stat, index) => (
+              <div key={index} className="project-stat-item">
+                <div className="stat-icon">
+                  {stat.icon}
+                </div>
+                <div className="stat-number-large">{stat.number}</div>
+                <div className="stat-label-large">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Секция "Как начать играть" - ДВЕ КОЛОНКИ */}
       <section id="how-to-play" className="how-to-play-single-column">
@@ -260,10 +435,15 @@ function HomePage() {
                 </div>
                 <div className="step-action-single">
                   <div className="price-single">1200 ₽</div>
-                  <button className="btn-single btn-buy">
+                  <a 
+                    href="https://store.steampowered.com/app/271590/Grand_Theft_Auto_V/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn-single btn-buy"
+                  >
                     <ShoppingCart size={16} />
                     КУПИТЬ
-                  </button>
+                  </a>
                 </div>
               </div>
 
@@ -278,19 +458,15 @@ function HomePage() {
                     <p>Самый быстрый способ начать играть</p>
                   </div>
                 </div>
-                <button className="btn-single btn-download">
+                <a 
+                  href="https://rage.mp/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="btn-single btn-download"
+                >
                   <Download size={16} />
                   СКАЧАТЬ
-                </button>
-              </div>
-
-              {/* Дополнительная информация */}
-              <div className="single-help">
-                <p className="help-text">Вопросы или проблемы? Посмотри видеоинструкцию</p>
-                <button className="btn-single btn-video">
-                  <Play size={16} />
-                  Видеоинструкция
-                </button>
+                </a>
               </div>
 
               {/* Адрес сервера */}
@@ -307,6 +483,15 @@ function HomePage() {
                   {copied ? 'Скопировано!' : 'Копировать'}
                 </button>
               </div>
+
+              {/* Дополнительная информация */}
+              <div className="single-help">
+                <p className="help-text">Вопросы или проблемы? Посмотри видеоинструкцию</p>
+                <button className="btn-single btn-video">
+                  <Play size={16} />
+                  Видеоинструкция
+                </button>
+              </div>
             </div>
 
             {/* Правая колонка - Социальные сети */}
@@ -319,7 +504,7 @@ function HomePage() {
                 <p className="social-subtitle-single">Узнавай первым об акциях и новостях</p>
                 
                 <div className="social-grid-single">
-                  <a href="https://discord.gg/astra-rp" className="social-link-single" target="_blank" rel="noopener noreferrer">
+                  <a href="https://discord.gg/WMa32mvWhg" className="social-link-single" target="_blank" rel="noopener noreferrer">
                     <div className="social-icon-wrapper">
                       <img src={DiscordIcon} alt="Discord" width={252} height={92} />
                     </div>
@@ -331,13 +516,13 @@ function HomePage() {
                     </div>
                   </a>
 
-                  <a href="https://youtube.com/astra-rp" className="social-link-single" target="_blank" rel="noopener noreferrer">
+                  <a href="https://www.youtube.com/@AstraRP-gta5" className="social-link-single" target="_blank" rel="noopener noreferrer">
                     <div className="social-icon-wrapper">
                       <img  src={YoutubeIcon} alt="YouTube" width={252} height={92} />
                     </div>
                   </a>
 
-                  <a href="https://t.me/astra-rp" className="social-link-single" target="_blank" rel="noopener noreferrer">
+                  <a href="https://t.me/astrarp5" className="social-link-single" target="_blank" rel="noopener noreferrer">
                     <div className="social-icon-wrapper">
                       <img src={TelegramIcon} alt="Telegram" width={252} height={92} />
                     </div>
@@ -354,270 +539,283 @@ function HomePage() {
         </div>
       </section>
 
-          {/* Галерея скриншотов и видео геймплея */}
-          <section id="gallery" className="gallery-section">
-            <div className="section-container">
-              <div className="section-header">
-                <div className="section-icon">
-                  <Image size={32} />
-                </div>
-                <h2 className="section-title">Галерея и Геймплей</h2>
-                <p className="section-subtitle">
-                  Посмотрите на красоту нашего игрового мира и погрузитесь в атмосферу сервера
-                </p>
-              </div>
+      {/* Галерея скриншотов и видео геймплея */}
+      <section id="gallery" className="gallery-section">
+        <div className="section-container">
+          <div className="section-header">
+            <div className="section-icon">
+              <Image size={32} />
+            </div>
+            <h2 className="section-title">Галерея и Геймплей</h2>
+            <p className="section-subtitle">
+              Посмотрите на красоту нашего игрового мира и погрузитесь в атмосферу сервера
+            </p>
+          </div>
 
-              {/* Переключатель между скриншотами и видео */}
-              <div className="gallery-tabs">
-                <button 
-                  className={`gallery-tab ${galleryTab === 'screenshots' ? 'active' : ''}`}
-                  onClick={() => {
-                    setGalleryTab('screenshots');
-                    setCurrentGalleryImage(0);
-                  }}
-                >
-                  <Image size={20} />
-                  Скриншоты
-                </button>
-                <button 
-                  className={`gallery-tab ${galleryTab === 'videos' ? 'active' : ''}`}
-                  onClick={() => {
-                    setGalleryTab('videos');
-                    setCurrentGalleryImage(0);
-                  }}
-                >
-                  <Video size={20} />
-                  Видео геймплея
-                </button>
-              </div>
+          {/* Переключатель между скриншотами и видео */}
+          <div className="gallery-tabs">
+            <button 
+              className={`gallery-tab ${galleryTab === 'screenshots' ? 'active' : ''}`}
+              onClick={() => {
+                setGalleryTab('screenshots');
+                setCurrentGalleryImage(0);
+              }}
+            >
+              <Image size={20} />
+              Скриншоты
+            </button>
+            <button 
+              className={`gallery-tab ${galleryTab === 'videos' ? 'active' : ''}`}
+              onClick={() => {
+                setGalleryTab('videos');
+                setCurrentGalleryImage(0);
+              }}
+            >
+              <Video size={20} />
+              Видео геймплея
+            </button>
+          </div>
 
-              {galleryTab === 'screenshots' ? (
-                <>
-                  <div className="gallery-container">
-                    <button className="gallery-nav-btn gallery-prev" onClick={prevGalleryImage} aria-label="Предыдущее изображение" title="Предыдущее изображение">
-                      <ChevronLeft size={24} />
-                    </button>
-                    
-                    <div className="gallery-main">
-                      <div className="gallery-item active">
-                        <div className="gallery-image-placeholder">
-                          <Image size={64} />
-                          <span>{galleryImages[currentGalleryImage].title}</span>
-                        </div>
-                        <div className="gallery-item-info">
-                          <h3>{galleryImages[currentGalleryImage].title}</h3>
-                          <p>{galleryImages[currentGalleryImage].description}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <button className="gallery-nav-btn gallery-next" onClick={nextGalleryImage} aria-label="Следующее изображение" title="Следующее изображение">
-                      <ChevronRight size={24} />
-                    </button>
-                  </div>
-
-                  <div className="gallery-thumbnails">
-                    {galleryImages.map((img, index) => (
-                      <div
-                        key={img.id}
-                        className={`gallery-thumbnail ${index === currentGalleryImage ? 'active' : ''}`}
-                        onClick={() => setCurrentGalleryImage(index)}
-                      >
-                        <div className="thumbnail-placeholder">
-                          <Image size={20} />
-                        </div>
-                        <span>{img.title}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="gallery-container">
-                    <button 
-                      className="gallery-nav-btn gallery-prev" 
-                      onClick={() => setCurrentGalleryImage((prev) => (prev - 1 + gameplayVideos.length) % gameplayVideos.length)}
-                      aria-label="Предыдущее видео" title="Предыдущее видео"
-                    >
-                      <ChevronLeft size={24} />
-                    </button>
-                    
-                    <div className="gallery-main">
-                      <div className="gallery-item active">
-                        <div className="gallery-video-placeholder">
-                          <div className="video-thumbnail">
-                            <Video size={64} />
-                            <div className="video-play-overlay">
-                              <Play size={48} fill="white" />
+          {galleryTab === 'screenshots' ? (
+            <>
+              {/* СЛАЙДЕР ДЛЯ СКРИНШОТОВ */}
+              <div className="slider-container">
+                <div className="slider-wrapper">
+                  <button 
+                    className="slider-nav-btn slider-prev" 
+                    onClick={prevGalleryImage}
+                    aria-label="Предыдущее изображение"
+                  >
+                    <ChevronLeft size={32} />
+                  </button>
+                  
+                  <div className="slider-main">
+                    <div className="slider-track">
+                      {galleryImages.map((image, index) => (
+                        <div
+                          key={image.id}
+                          className={`slider-slide ${index === currentGalleryImage ? 'active' : ''} ${
+                            index === currentGalleryImage - 1 ? 'prev' : ''
+                          } ${
+                            index === currentGalleryImage + 1 ? 'next' : ''
+                          }`}
+                        >
+                          <img 
+                            src={image.image} 
+                            alt={image.title}
+                            className="slider-image"
+                          />
+                          <div className="slider-overlay">
+                            <div className="slider-content">
+                              <h3>{image.title}</h3>
+                              <p>{image.description}</p>
                             </div>
-                            <span>{gameplayVideos[currentGalleryImage].title}</span>
                           </div>
                         </div>
-                        <div className="gallery-item-info">
-                          <h3>{gameplayVideos[currentGalleryImage].title}</h3>
-                          <p>{gameplayVideos[currentGalleryImage].description}</p>
-                          <a 
-                            href={`https://www.youtube.com/watch?v=${gameplayVideos[currentGalleryImage].youtubeId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="watch-video-btn"
-                          >
-                            <Play size={18} />
-                            Смотреть на YouTube
-                          </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button 
+                    className="slider-nav-btn slider-next" 
+                    onClick={nextGalleryImage}
+                    aria-label="Следующее изображение"
+                  >
+                    <ChevronRight size={32} />
+                  </button>
+                </div>
+
+                {/* Индикаторы слайдов */}
+                <div className="slider-indicators">
+                  {galleryImages.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`slider-indicator ${index === currentGalleryImage ? 'active' : ''}`}
+                      onClick={() => goToSlide(index)}
+                      aria-label={`Перейти к слайду ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="gallery-container">
+                <button 
+                  className="gallery-nav-btn gallery-prev" 
+                  onClick={() => setCurrentGalleryImage((prev) => (prev - 1 + gameplayVideos.length) % gameplayVideos.length)}
+                  aria-label="Предыдущее видео" title="Предыдущее видео"
+                >
+                  <ChevronLeft size={40} />
+                </button>
+                
+                <div className="gallery-main">
+                  <div className="gallery-item active">
+                    <div className="gallery-video-placeholder">
+                      <div className="video-thumbnail">
+                        <Video size={64} />
+                        <div className="video-play-overlay">
+                          <Play size={48} fill="white" />
                         </div>
+                        <span>{gameplayVideos[currentGalleryImage].title}</span>
                       </div>
                     </div>
-
-                    <button 
-                      className="gallery-nav-btn gallery-next" 
-                      onClick={() => setCurrentGalleryImage((prev) => (prev + 1) % gameplayVideos.length)}
-                      aria-label="Следующее видео" title="Следующее видео"
-                    >
-                      <ChevronRight size={24} />
-                    </button>
-                  </div>
-
-                  <div className="gallery-thumbnails">
-                    {gameplayVideos.map((video, index) => (
-                      <div
-                        key={video.id}
-                        className={`gallery-thumbnail ${index === currentGalleryImage ? 'active' : ''}`}
-                        onClick={() => setCurrentGalleryImage(index)}
+                    <div className="gallery-item-info">
+                      <h3>{gameplayVideos[currentGalleryImage].title}</h3>
+                      <p>{gameplayVideos[currentGalleryImage].description}</p>
+                      <a 
+                        href={`https://www.youtube.com/watch?v=${gameplayVideos[currentGalleryImage].youtubeId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="watch-video-btn"
                       >
-                        <div className="thumbnail-placeholder video-thumbnail-icon">
-                          <Video size={20} />
-                          <span className="video-icon-badge">{video.thumbnail}</span>
-                        </div>
-                        <span>{video.title}</span>
-                      </div>
-                    ))}
+                        <Play size={18} />
+                        Смотреть на YouTube
+                      </a>
+                    </div>
                   </div>
-                </>
-              )}
-            </div>
-          </section>
-
-          {/* Карта сервера */}
-          <section id="map" className="map-section">
-            <div className="section-container">
-              <div className="section-header">
-                <div className="section-icon">
-                  <MapPin size={32} />
                 </div>
-                <h2 className="section-title">Карта сервера</h2>
-                <p className="section-subtitle">
-                  Исследуйте основные локации нашего игрового мира
+
+                <button 
+                  className="gallery-nav-btn gallery-next" 
+                  onClick={() => setCurrentGalleryImage((prev) => (prev + 1) % gameplayVideos.length)}
+                  aria-label="Следующее видео" title="Следующее видео"
+                >
+                  <ChevronRight size={40} />
+                </button>
+              </div>
+
+              <div className="gallery-thumbnails">
+                {gameplayVideos.map((video, index) => (
+                  <div
+                    key={video.id}
+                    className={`gallery-thumbnail ${index === currentGalleryImage ? 'active' : ''}`}
+                    onClick={() => setCurrentGalleryImage(index)}
+                  >
+                    <div className="thumbnail-placeholder video-thumbnail-icon">
+                      <Video size={20} />
+                      <span className="video-icon-badge">{video.thumbnail}</span>
+                    </div>
+                    <span>{video.title}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* FAQ секция - 3 КОЛОНКИ НА ВСЮ ШИРИНУ */}
+      <section id="faq" className="faq-section">
+        <div className="section-container-single">
+          <div className="single-faq">
+            <div className="faq-header-single">
+              <h2>ОТВЕТЫ НА ЧАСТЫЕ ВОПРОСЫ</h2>
+            </div>
+            
+            <div className="faq-grid-single">
+              <div className="faq-item-single">
+                <h3>Что такое Astra RP?</h3>
+                <p>Это уникальный проект на базе GTA V, позволяющий тысячам игроков взаимодействовать друг с другом в реальном времени. Мы создали полноценный виртуальный мир с экономикой, профессиями и бесконечными возможностями для ролевой игры.</p>
+              </div>
+              
+              <div className="faq-item-single">
+                <h3>Как начать играть на Astra RP?</h3>
+                <p>Для начала необходимо приобрести лицензионную GTA V Legacy, установить Rage MP клиент и подключиться к нашему серверу используя адрес "connect astrapp.com". После подключения пройдите регистрацию и начните свое приключение!</p>
+              </div>
+              
+              <div className="faq-item-single">
+                <h3>Что такое Role Play?</h3>
+                <p>Role Play (RP) - это игровой режим, где участники создают персонажей и сценарии, а затем действуют согласно своим ролям в рамках игрового процесса. Вы можете стать полицейским, врачом, бизнесменом, преступником или кем угодно другим!</p>
+              </div>
+              
+              <div className="faq-item-single">
+                <h3>Чем заняться на сервере?</h3>
+                <p>На сервере доступны десятки профессий: от таксиста и водителя до бизнесмена и политика. Вы можете покупать недвижимость, транспорт, заниматься бизнесом, участвовать в криминальной деятельности или работать на законопослушных работах. Также проводятся регулярные ивенты и турниры!</p>
+              </div>
+
+              <div className="faq-item-single">
+                <h3>Где найти правила сервера?</h3>
+                <p>
+                  Информацию о правилах сервера, подаче жалоб на игроков и другие важные темы можно найти на 
+                  <a href="https://forum.astra-rp.fun" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', marginLeft: '4px'}}>
+                    форуме проекта
+                  </a>. Правила обязательны к соблюдению всеми игроками.
                 </p>
               </div>
 
-              <div className="map-container">
-                <div className="map-image">
-                  <div className="map-placeholder">
-                    <MapPin size={64} />
-                    <span>Интерактивная карта сервера</span>
-                  </div>
-                  
-                  {mapLocations.map((location) => (
-                    <div
-                      key={location.id}
-                      className="map-marker"
-                      style={{
-                        left: `${location.x}%`,
-                        top: `${location.y}%`
-                      }}
-                      title={location.name}
-                    >
-                      <MapPin size={24} />
-                      <div className="map-marker-tooltip">
-                        <h4>{location.name}</h4>
-                        <p>{location.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="map-legend">
-                  <h3>Основные локации</h3>
-                  <div className="map-locations-list">
-                    {mapLocations.map((location) => (
-                      <div key={location.id} className="map-location-item">
-                        <MapPin size={16} />
-                        <div>
-                          <strong>{location.name}</strong>
-                          <p>{location.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="faq-item-single">
+                <h3>Какие требования к компьютеру?</h3>
+                <p>Для комфортной игры на Astra RP требуется компьютер с GTA V, которая способна работать на средних настройках. Сервер оптимизирован и работает стабильно даже на слабых системах благодаря нашей инфраструктуре.</p>
               </div>
-            </div>
-          </section>
 
-          {/* FAQ секция - 3 КОЛОНКИ НА ВСЮ ШИРИНУ */}
-          <section id="faq" className="faq-section">
-            <div className="section-container-single">
-              <div className="single-faq">
-                <div className="faq-header-single">
-                  <h2>ОТВЕТЫ НА ЧАСТЫЕ ВОПРОСЫ</h2>
-                </div>
-                
-                <div className="faq-grid-single">
-                  <div className="faq-item-single">
-                    <h3>Что такое Astra RP?</h3>
-                    <p>Это уникальный проект на базе GTA V, позволяющий тысячам игроков взаимодействовать друг с другом в реальном времени. Мы создали полноценный виртуальный мир с экономикой, профессиями и бесконечными возможностями для ролевой игры.</p>
-                  </div>
-                  
-                  <div className="faq-item-single">
-                    <h3>Как начать играть на Astra RP?</h3>
-                    <p>Для начала необходимо приобрести лицензионную GTA V Legacy, установить Rage MP клиент и подключиться к нашему серверу используя адрес "connect astrapp.com". После подключения пройдите регистрацию и начните свое приключение!</p>
-                  </div>
-                  
-                  <div className="faq-item-single">
-                    <h3>Что такое Role Play?</h3>
-                    <p>Role Play (RP) - это игровой режим, где участники создают персонажей и сценарии, а затем действуют согласно своим ролям в рамках игрового процесса. Вы можете стать полицейским, врачом, бизнесменом, преступником или кем угодно другим!</p>
-                  </div>
-                  
-                  <div className="faq-item-single">
-                    <h3>Чем заняться на сервере?</h3>
-                    <p>На сервере доступны десятки профессий: от таксиста и водителя до бизнесмена и политика. Вы можете покупать недвижимость, транспорт, заниматься бизнесом, участвовать в криминальной деятельности или работать на законопослушных работах. Также проводятся регулярные ивенты и турниры!</p>
-                  </div>
-
-                  <div className="faq-item-single">
-                    <h3>Где найти правила сервера?</h3>
-                    <p>
-                      Информацию о правилах сервера, подаче жалоб на игроков и другие важные темы можно найти на 
-                      <a href="https://forum.astra-rp.fun" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', marginLeft: '4px'}}>
-                        форуме проекта
-                      </a>. Правила обязательны к соблюдению всеми игроками.
-                    </p>
-                  </div>
-
-                  <div className="faq-item-single">
-                    <h3>Как работает донат на сервере?</h3>
-                    <p>Донат позволяет пополнить игровой счет и получить игровую валюту. Все платежи обрабатываются автоматически и безопасно. Средства зачисляются мгновенно после подтверждения платежа. Подробнее на странице пополнения счета.</p>
-                  </div>
-
-                  <div className="faq-item-single">
-                    <h3>Какие требования к компьютеру?</h3>
-                    <p>Для комфортной игры на Astra RP требуется компьютер с GTA V, которая способна работать на средних настройках. Сервер оптимизирован и работает стабильно даже на слабых системах благодаря нашей инфраструктуре.</p>
-                  </div>
-
-                  <div className="faq-item-single">
-                    <h3>Есть ли поддержка на сервере?</h3>
-                    <p>Да! Наша команда поддержки работает 24/7 и готова помочь вам с любыми вопросами. Вы можете связаться с нами через Discord, форум или систему поддержки в игре. Мы всегда рады помочь!</p>
-                  </div>
-
-                  <div className="faq-item-single">
-                    <h3>Как стать частью команды сервера?</h3>
-                    <p>Мы постоянно ищем активных и ответственных игроков для пополнения команды администрации, модераторов и разработчиков. Если вы хотите помочь развитию проекта, свяжитесь с нами через Discord или форум!</p>
-                  </div>
-               
-                </div>
+              <div className="faq-item-single">
+                <h3>Есть ли поддержка на сервере?</h3>
+                <p>Да! Наша команда поддержки работает 24/7 и готова помочь вам с любыми вопросами. Вы можете связаться с нами через Discord или форум. Мы всегда рады помочь!</p>
               </div>
+
+              <div className="faq-item-single">
+                <h3>Как стать частью команды сервера?</h3>
+                <p>Мы постоянно ищем активных и ответственных игроков для пополнения команды администрации, модераторов и разработчиков. Если вы хотите помочь развитию проекта, свяжитесь с нами через форум!</p>
+              </div>
+           
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
+
+      {/* Боковые уведомления с индикатором текущей секции - ПОКАЗЫВАЕТСЯ ТОЛЬКО ПОСЛЕ HERO */}
+      {showRightMenu && (
+        <div className="section-indicator-sidebar">
+          <div className="sidebar-nav">
+            <a 
+              href="#hero" 
+              className={`sidebar-nav-item ${activeSection === 'hero' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }}
+              title="Главная"
+            >
+              <div className="sidebar-nav-dot"></div>
+              <span className="sidebar-nav-label">Главная</span>
+            </a>
+            <a 
+              href="#about" 
+              className={`sidebar-nav-item ${activeSection === 'about' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}
+              title="О проекте"
+            >
+              <div className="sidebar-nav-dot"></div>
+              <span className="sidebar-nav-label">О проекте</span>
+            </a>
+            <a 
+              href="#how-to-play" 
+              className={`sidebar-nav-item ${activeSection === 'how-to-play' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); scrollToSection('how-to-play'); }}
+              title="Как играть"
+            >
+              <div className="sidebar-nav-dot"></div>
+              <span className="sidebar-nav-label">Как играть</span>
+            </a>
+            <a 
+              href="#gallery" 
+              className={`sidebar-nav-item ${activeSection === 'gallery' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }}
+              title="Галерея"
+            >
+              <div className="sidebar-nav-dot"></div>
+              <span className="sidebar-nav-label">Галерея</span>
+            </a>
+            <a 
+              href="#faq" 
+              className={`sidebar-nav-item ${activeSection === 'faq' ? 'active' : ''}`}
+              onClick={(e) => { e.preventDefault(); scrollToSection('faq'); }}
+              title="FAQ"
+            >
+              <div className="sidebar-nav-dot"></div>
+              <span className="sidebar-nav-label">FAQ</span>
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Футер */}
       <footer className="footer">
@@ -630,16 +828,16 @@ function HomePage() {
                 Мы создаём уникальный игровой опыт для каждого участника нашего сообщества.
               </p>
               <div className="social-links">
-                <a href="https://discord.gg/astra-rp" className="social-icon" title="Discord" target="_blank" rel="noopener noreferrer">
+                <a href="https://discord.gg/WMa32mvWhg" className="social-icon" title="Discord" target="_blank" rel="noopener noreferrer">
                   <img src={DiscordIcon} alt="Discord" />
                 </a>
                 <a href="https://vk.com/astra-rp" className="social-icon" title="VK" target="_blank" rel="noopener noreferrer">
                   <img src={VkIcon} alt="VKontakte" />
                 </a>
-                <a href="https://youtube.com/astra-rp" className="social-icon" title="YouTube" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.youtube.com/@AstraRP-gta5" className="social-icon" title="YouTube" target="_blank" rel="noopener noreferrer">
                   <img src={YoutubeIcon} alt="YouTube" />
                 </a>
-                <a href="https://t.me/astra-rp" className="social-icon" title="Telegram" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/astrarp5" className="social-icon" title="Telegram" target="_blank" rel="noopener noreferrer">
                   <img src={TelegramIcon} alt="Telegram" />
                 </a>
               </div>
@@ -659,10 +857,8 @@ function HomePage() {
               <div className="footer-column">
                 <h4>Сообщество</h4>
                 <ul className="footer-links">
-                  <li><a href="https://discord.gg/astra-rp" target="_blank" rel="noopener noreferrer">Discord сервер</a></li>
+                  <li><a href="https://discord.gg/WMa32mvWhg" target="_blank" rel="noopener noreferrer">Discord сервер</a></li>
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Форум</a></li>
-                  <li><a href="#">База знаний</a></li>
-                  <li><a href="#">Поддержка</a></li>
                 </ul>
               </div>
 
@@ -670,9 +866,6 @@ function HomePage() {
                 <h4>Правовая информация</h4>
                 <ul className="footer-links">
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
-                  <li><a href="#">Политика конфиденциальности</a></li>
-                  <li><a href="#">Пользовательское соглашение</a></li>
-                  <li><a href="#">Контакты</a></li>
                 </ul>
               </div>
             </div>
@@ -686,11 +879,6 @@ function HomePage() {
                 Все торговые марки принадлежат их правообладателям.
               </p>
             </div>
-            <div className="footer-badges">
-              <div className="badge">18+</div>
-              <div className="badge">RP</div>
-              <div className="badge">GTA V</div>
-            </div>
           </div>
         </div>
       </footer>
@@ -699,4 +887,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
