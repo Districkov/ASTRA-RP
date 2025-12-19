@@ -18,12 +18,7 @@ function TermsOfService() {
         <p className="last-updated">Последнее обновление: {new Date().toLocaleDateString('ru-RU')}</p>
 
         <section className="important-notice">
-<<<<<<< HEAD
           <p><strong>⚠️ ВАЖНО:</strong> Прочитайте это соглашение внимательно. Используя ASTRA-RP, вы принимаете ВСЕ условия.</p>
-=======
-        <section className="important-notice">
-          <p><strong>ВАЖНО:</strong> Прочитайте это соглашение внимательно. Используя ASTRA-RP, вы принимаете ВСЕ условия.</p>
->>>>>>> e74031a1a02947cd08b2c55b8623809ccf92a6f5
         </section>
         <section>
           <h2>1. Принятие условий и определения</h2>
