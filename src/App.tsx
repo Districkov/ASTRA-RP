@@ -4,6 +4,9 @@ import "./App.css";
 import AstraLogo from "./assets/Astra.svg";
 import HomePage from "./pages/HomePage";
 import DonatePage from "./pages/DonatePage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import OfferAgreement from "./pages/OfferAgreement";
 import {
   Home,
   Info,
@@ -184,6 +187,9 @@ const App: FC<AppProps> = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/donate" element={<DonatePage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/offer-agreement" element={<OfferAgreement />} />
       </Routes>
     </div>
   );
