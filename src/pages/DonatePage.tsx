@@ -2,12 +2,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DonatePage.css";
-import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, Loader2, AlertCircle, X } from 'lucide-react';
+import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, Loader2, AlertCircle, X, AlertTriangle } from 'lucide-react';
 import AstraLogo from "./../assets/astra.png";
 import DiscordIcon from "./../assets/DS.svg";
 import VkIcon from "./../assets/Vk.svg";
 import YoutubeIcon from "./../assets/Youtobe.svg";
 import TelegramIcon from "./../assets/telega.svg";
+
+// Интерфейсы валидации
+interface ValidationError {
+  field: string;
+  message: string;
+}
+
+interface DonateFormData {
+  email: string;
+  username: string;
+  amount: number;
+  paymentMethod: string;
+}
 
 function DonatePage() {
   const navigate = useNavigate();
@@ -17,42 +30,92 @@ function DonatePage() {
   const [amount, setAmount] = useState(100);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [agreeOffer, setAgreeOffer] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
 
   const exchangeRate = "1₽ = 2$ = 300 игровой валюты";
 
-  const handlePayment = async () => {
-    // Валидация
-    if (!email || !username || !agreeTerms || !agreePrivacy) {
-      setPaymentStatus({
-        type: 'error',
-        message: 'Заполните все обязательные поля и согласия!'
-      });
-      setTimeout(() => setPaymentStatus({ type: null, message: '' }), 5000);
-      return;
-    }
+  // Расширенная валидация
+  const validateForm = (formData: DonateFormData): ValidationError[] => {
+    const errors: ValidationError[] = [];
 
-    if (amount < 10 || amount > 50000) {
-      setPaymentStatus({
-        type: 'error',
-        message: 'Сумма должна быть от 10₽ до 50,000₽'
-      });
-      setTimeout(() => setPaymentStatus({ type: null, message: '' }), 5000);
-      return;
-    }
-
-    // Валидация email
+    // Email валидация
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!formData.email) {
+      errors.push({ field: 'email', message: 'Email обязателен' });
+    } else if (!emailRegex.test(formData.email)) {
+      errors.push({ field: 'email', message: 'Некорректный формат email' });
+    } else if (formData.email.length > 100) {
+      errors.push({ field: 'email', message: 'Email слишком длинный (максимум 100 символов)' });
+    }
+
+    // Username валидация
+    if (!formData.username) {
+      errors.push({ field: 'username', message: 'Имя пользователя обязательно' });
+    } else if (formData.username.length < 3) {
+      errors.push({ field: 'username', message: 'Имя пользователя должно быть не менее 3 символов' });
+    } else if (formData.username.length > 32) {
+      errors.push({ field: 'username', message: 'Имя пользователя не может быть более 32 символов' });
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      errors.push({ field: 'username', message: 'Имя может содержать только буквы, цифры, подчеркивание и дефис' });
+    }
+
+    // Amount валидация
+    if (!formData.amount || formData.amount === 0) {
+      errors.push({ field: 'amount', message: 'Укажите сумму' });
+    } else if (formData.amount < 10) {
+      errors.push({ field: 'amount', message: 'Минимальная сумма 10₽' });
+    } else if (formData.amount > 50000) {
+      errors.push({ field: 'amount', message: 'Максимальная сумма 50,000₽' });
+    } else if (!Number.isInteger(formData.amount)) {
+      errors.push({ field: 'amount', message: 'Сумма должна быть целым числом' });
+    }
+
+    // Payment method валидация
+    if (!formData.paymentMethod) {
+      errors.push({ field: 'paymentMethod', message: 'Выберите способ оплаты' });
+    }
+
+    return errors;
+  };
+
+  const handlePayment = async () => {
+    // Проверка всех согласий
+    if (!agreeTerms || !agreePrivacy || !agreeOffer) {
       setPaymentStatus({
         type: 'error',
-        message: 'Введите корректный email адрес'
+        message: 'Пожалуйста, согласитесь со всеми условиями и документами'
       });
+      setValidationErrors([]);
       setTimeout(() => setPaymentStatus({ type: null, message: '' }), 5000);
       return;
     }
 
+    // Валидация всех полей формы
+    const formData: DonateFormData = {
+      email,
+      username,
+      amount,
+      paymentMethod
+    };
+
+    const errors = validateForm(formData);
+
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      const errorMessages = errors.map(e => e.message).join(', ');
+      setPaymentStatus({
+        type: 'error',
+        message: `Ошибка валидации: ${errorMessages}`
+      });
+      setTimeout(() => setPaymentStatus({ type: null, message: '' }), 6000);
+      return;
+    }
+
+    // Очистка ошибок валидации если всё ОК
+    setValidationErrors([]);
     setIsProcessing(true);
     setPaymentStatus({ type: null, message: '' });
 
@@ -63,10 +126,13 @@ function DonatePage() {
       // Имитация обработки платежа
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Расчет игровой валюты
+      const gameBalance = amount * 300;
+      
       // В реальном приложении здесь будет вызов API платежного шлюза
       setPaymentStatus({
         type: 'success',
-        message: `Платеж на сумму ${amount}₽ успешно создан! В реальном приложении здесь будет редирект на платежный шлюз.`
+        message: `✓ Платеж на сумму ${amount}₽ успешно создан! Вы получите ${gameBalance} игровой валюты. Спасибо за поддержку ASTRA-RP!`
       });
       
       // Очистка формы после успешного платежа (в демо режиме)
@@ -76,7 +142,9 @@ function DonatePage() {
         setAmount(100);
         setAgreeTerms(false);
         setAgreePrivacy(false);
+        setAgreeOffer(false);
         setPaymentStatus({ type: null, message: '' });
+        setValidationErrors([]);
       }, 5000);
 
     } catch (error) {
@@ -156,11 +224,17 @@ function DonatePage() {
                 </label>
                 <input
                   type="email"
-                  className="form-input"
+                  className={`form-input ${validationErrors.find(e => e.field === 'email') ? 'error' : ''}`}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@mail.ru"
                 />
+                {validationErrors.find(e => e.field === 'email') && (
+                  <span className="error-message">
+                    <AlertTriangle size={14} />
+                    {validationErrors.find(e => e.field === 'email')?.message}
+                  </span>
+                )}
               </div>
 
               {/* Логин */}
@@ -171,11 +245,17 @@ function DonatePage() {
                 </label>
                 <input
                   type="text"
-                  className="form-input"
+                  className={`form-input ${validationErrors.find(e => e.field === 'username') ? 'error' : ''}`}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Ваш игровой никнейм"
                 />
+                {validationErrors.find(e => e.field === 'username') && (
+                  <span className="error-message">
+                    <AlertTriangle size={14} />
+                    {validationErrors.find(e => e.field === 'username')?.message}
+                  </span>
+                )}
               </div>
 
               {/* Сумма */}
@@ -187,7 +267,7 @@ function DonatePage() {
                 <div className="amount-input-group">
                   <input
                     type="number"
-                    className="form-input amount-input"
+                    className={`form-input amount-input ${validationErrors.find(e => e.field === 'amount') ? 'error' : ''}`}
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
                     min="10"
@@ -195,6 +275,12 @@ function DonatePage() {
                   />
                   <span className="currency">₽</span>
                 </div>
+                {validationErrors.find(e => e.field === 'amount') && (
+                  <span className="error-message">
+                    <AlertTriangle size={14} />
+                    {validationErrors.find(e => e.field === 'amount')?.message}
+                  </span>
+                )}
                 <div className="amount-presets">
                   {[100, 500, 1000, 2500, 5000].map((preset) => (
                     <button
@@ -222,7 +308,7 @@ function DonatePage() {
                     onChange={(e) => setAgreeTerms(e.target.checked)}
                   />
                   <span className="checkmark"></span>
-                  Принимаю условия <a href="#" className="link">пользовательского соглашения</a>
+                  Я прочитал и согласен с <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="link">Пользовательским соглашением</a>
                 </label>
 
                 <label className="checkbox-label">
@@ -232,8 +318,17 @@ function DonatePage() {
                     onChange={(e) => setAgreePrivacy(e.target.checked)}
                   />
                   <span className="checkmark"></span>
-                  Согласен на обработку персональных данных, в порядке, на условиях и в объёме, 
-                  указанной в согласии, текст которого прочитан мною полностью
+                  Я согласен с <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="link">Политикой конфиденциальности</a> и даю согласие на обработку моих персональных данных
+                </label>
+
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={agreeOffer}
+                    onChange={(e) => setAgreeOffer(e.target.checked)}
+                  />
+                  <span className="checkmark"></span>
+                  Я ознакомлен с <a href="/offer-agreement" target="_blank" rel="noopener noreferrer" className="link">Публичной офертой</a> и принимаю условия оказания услуг
                 </label>
               </div>
 
@@ -261,7 +356,7 @@ function DonatePage() {
               <button 
                 className="payment-btn"
                 onClick={handlePayment}
-                disabled={!agreeTerms || !agreePrivacy || !email || !username || isProcessing}
+                disabled={!agreeTerms || !agreePrivacy || !agreeOffer || !email || !username || isProcessing}
               >
                 {isProcessing ? (
                   <>
@@ -352,9 +447,9 @@ function DonatePage() {
                     <h4>Правовая информация</h4>
                     <ul className="footer-links">
                       <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
-                      <li><a href="#">Политика конфиденциальности</a></li>
-                      <li><a href="#">Пользовательское соглашение</a></li>
-                      <li><a href="#">Контакты</a></li>
+                      <li><a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a></li>
+                      <li><a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a></li>
+                      <li><a href="/offer-agreement" target="_blank" rel="noopener noreferrer">Публичная оферта</a></li>
                     </ul>
                   </div>
                 </div>

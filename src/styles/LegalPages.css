@@ -1,0 +1,200 @@
+/* ========== Legal Pages Styles ========== */
+
+.legal-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: #e0e0e0;
+  padding: 40px 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-4px);
+}
+
+.legal-content {
+  max-width: 900px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 40px;
+}
+
+.legal-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.legal-content .last-updated {
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 13px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+}
+
+.legal-content section {
+  margin-bottom: 32px;
+}
+
+.legal-content section:last-child {
+  margin-bottom: 0;
+}
+
+.legal-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #ffffff;
+  text-transform: none;
+}
+
+.legal-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 10px;
+  color: #d0d0d0;
+}
+
+.legal-content p {
+  line-height: 1.7;
+  margin-bottom: 12px;
+  color: #c0c0c0;
+  font-size: 15px;
+}
+
+.legal-content ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.legal-content li {
+  padding-left: 24px;
+  margin-bottom: 8px;
+  position: relative;
+  line-height: 1.6;
+  color: #b0b0b0;
+  font-size: 15px;
+}
+
+.legal-content li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4a9eff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.legal-content strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.exchange-rate {
+  background: rgba(74, 158, 255, 0.15);
+  border-left: 4px solid #4a9eff;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+.exchange-rate strong {
+  color: #4a9eff;
+}
+
+/* ========== Responsive Design ========== */
+
+@media (max-width: 768px) {
+  .legal-page-container {
+    padding: 20px 16px;
+  }
+
+  .legal-content {
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .legal-content h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .legal-content h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .legal-content h3 {
+    font-size: 15px;
+  }
+
+  .legal-content p,
+  .legal-content li {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .legal-content section {
+    margin-bottom: 24px;
+  }
+
+  .back-button {
+    margin-bottom: 20px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-page-container {
+    padding: 16px 12px;
+  }
+
+  .legal-content {
+    padding: 16px;
+  }
+
+  .legal-content h1 {
+    font-size: 20px;
+  }
+
+  .legal-content h2 {
+    font-size: 16px;
+  }
+
+  .legal-content li {
+    padding-left: 20px;
+    font-size: 13px;
+  }
+
+  .legal-content p {
+    font-size: 13px;
+  }
+}
