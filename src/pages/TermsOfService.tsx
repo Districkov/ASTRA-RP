@@ -277,8 +277,7 @@ function TermsOfService() {
   );
 }
 
-export default TermsOfService;        <section>
-          <h2>1. Принятие условий</h2>
+export default TermsOfService;
           <p>
             Используя ASTRA-RP сервер, вы согласны соблюдать данное Пользовательское соглашение. 
             Если вы не согласны с этими условиями, пожалуйста, не используйте наши услуги.
