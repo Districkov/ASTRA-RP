@@ -50,15 +50,20 @@ export const CONTACT_INFO = {
   },
   
   SOCIAL: {
-    DISCORD: 'https://discord.gg/astra-rp',
+    DISCORD: 'https://discord.gg/WMa32mvWhg',
     VK: 'https://vk.com/astra-rp',
-    YOUTUBE: 'https://youtube.com/astra-rp',
-    TELEGRAM: 'https://t.me/astra-rp',
+    YOUTUBE: 'https://www.youtube.com/@AstraRP-gta5',
+    TELEGRAM: 'https://t.me/astrarp5',
   },
   
   WEBSITE: {
     FORUM: 'https://forum.astra-rp.fun',
     MAIN: 'https://astra-rp.fun',
+  },
+  
+  SERVER: {
+    CONNECT_COMMAND: 'connect astrapp.com',
+    DISPLAY_ADDRESS: 'astrapp.com',
   },
 } as const;
 
