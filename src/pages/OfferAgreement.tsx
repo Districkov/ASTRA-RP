@@ -12,13 +12,11 @@ function OfferAgreement() {
 
       <div className="legal-content">
         <div className="legal-header">
-        <div className="legal-header">
           <h1>Публичная оферта о дополнительных услугах</h1>
           <p className="legal-subtitle">Договор оказания услуг донация в игре ASTRA-RP</p>
-        </div>ssName="last-updated">Действительна с: {new Date().toLocaleDateString('ru-RU')}</p>
+        </div>
+        <p className="last-updated">Действительна с: {new Date().toLocaleDateString('ru-RU')}</p>
 
-        <section className="important-notice">
-          <AlertCircle size={20} />
         <section className="important-notice">
           <p>
             <strong>⚠️ ВНИМАНИЕ:</strong> Эта публичная оферта является соответствии со статьей 435-436 
