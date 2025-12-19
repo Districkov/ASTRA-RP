@@ -758,6 +758,23 @@ function HomePage() {
                 <h3>Как стать частью команды сервера?</h3>
                 <p>Мы постоянно ищем активных и ответственных игроков для пополнения команды администрации, модераторов и разработчиков. Если вы хотите помочь развитию проекта, свяжитесь с нами через форум!</p>
               </div>
+
+              <div className="faq-item-single">
+                <h3>Где найти правовую информацию?</h3>
+                <p>
+                  Ознакомиться с нашей 
+                  <a href="/privacy-policy" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
+                    политикой конфиденциальности
+                  </a>,
+                  <a href="/terms-of-service" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
+                    пользовательским соглашением
+                  </a> и 
+                  <a href="/offer-agreement" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
+                    публичной офертой
+                  </a>
+                  вы можете в соответствующих разделах.
+                </p>
+              </div>
            
             </div>
           </div>
@@ -866,6 +883,9 @@ function HomePage() {
                 <h4>Правовая информация</h4>
                 <ul className="footer-links">
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
+                  <li><a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a></li>
+                  <li><a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a></li>
+                  <li><a href="/offer-agreement" target="_blank" rel="noopener noreferrer">Публичная оферта</a></li>
                 </ul>
               </div>
             </div>
@@ -877,6 +897,9 @@ function HomePage() {
               <p className="footer-disclaimer">
                 ASTRA RP не связан с Rockstar Games, Take-Two Interactive или RAGE MP. 
                 Все торговые марки принадлежат их правообладателям.
+              </p>
+              <p className="footer-company-info">
+                <strong>ИП Сололмин Иван Витальевич</strong> | ИНН: 772593116674 | ОГРН: 325774600774297
               </p>
             </div>
           </div>

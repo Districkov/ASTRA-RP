@@ -4,7 +4,13 @@ import "./App.css";
 import AstraLogo from "./assets/Astra.svg";
 import HomePage from "./pages/HomePage";
 import DonatePage from "./pages/DonatePage";
+<<<<<<< HEAD
 import LegalPage from "./pages/LegalPage";
+=======
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import OfferAgreement from "./pages/OfferAgreement";
+>>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 import {
   Home,
   Info,
@@ -241,7 +247,13 @@ const App: FC<AppProps> = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/donate" element={<DonatePage />} />
+<<<<<<< HEAD
         <Route path="/legal/:page?" element={<LegalPage />} />
+=======
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/offer-agreement" element={<OfferAgreement />} />
+>>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
       </Routes>
     </div>
   );
