@@ -425,8 +425,8 @@ function DonatePage() {
         </div>
       </div>
 
-     <footer className="footer">
-            <div className="footer-container">
+      <footer className="footer">
+        <div className="footer-container">
               <div className="footer-content">
                 <div className="footer-brand">
                   <img src={AstraLogo} alt="ASTRA RP" className="footer-logo" />
