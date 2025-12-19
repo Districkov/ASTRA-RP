@@ -22,7 +22,7 @@ function TermsOfService() {
 
         <section className="important-notice">
           <AlertCircle size={20} />
-          <p><strong>⚠️ ВАЖНО:</strong> Прочитайте это соглашение внимательно. Используя ASTRA-RP, вы принимаете ВСЕ условия.</p>
+          <p><strong>ВАЖНО:</strong> Прочитайте это соглашение внимательно. Используя ASTRA-RP, вы принимаете ВСЕ условия.</p>
         </section>
 
         <section>
