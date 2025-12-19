@@ -1592,7 +1592,6 @@ html, body, #root {
   font-weight: 500;
 }
 
-<<<<<<< HEAD
 .footer-legal {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -1607,13 +1606,13 @@ html, body, #root {
   font-size: 0.85rem;
   margin: 0;
   font-weight: 500;
-=======
+}
+
 .footer-company-info {
   font-size: 0.8rem;
   color: #475569;
   margin-top: 0.75rem;
   font-weight: 600;
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 }
 
 /* ===== Боковой индикатор секций ===== */
