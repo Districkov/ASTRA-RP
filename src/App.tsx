@@ -4,6 +4,7 @@ import "./App.css";
 import AstraLogo from "./assets/Astra.svg";
 import HomePage from "./pages/HomePage";
 import DonatePage from "./pages/DonatePage";
+import LegalPage from "./pages/LegalPage";
 import {
   Home,
   Info,
@@ -22,6 +23,7 @@ const Navigation: FC<NavigationProps> = () => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [showHeaderNav, setShowHeaderNav] = useState<boolean>(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const handleScroll = (): void => {
@@ -63,6 +65,8 @@ const Navigation: FC<NavigationProps> = () => {
       if (location.pathname === "/") {
         window.removeEventListener("scroll", handleScroll);
       }
+      // Восстанавливаем скролл при размонтировании
+      document.body.style.overflow = '';
     };
   }, [location.pathname]);
 
@@ -94,10 +98,31 @@ const Navigation: FC<NavigationProps> = () => {
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string): void => {
     e.preventDefault();
     scrollToSection(sectionId);
+    setIsMobileMenuOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const toggleMobileMenu = (): void => {
+    const newState = !isMobileMenuOpen;
+    setIsMobileMenuOpen(newState);
+    // Блокируем скролл body при открытом меню
+    if (newState) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   };
 
   return (
     <>
+      {/* Мобильное меню оверлей */}
+      {isMobileMenuOpen && (
+        <div 
+          className="mobile-menu-overlay" 
+          onClick={toggleMobileMenu}
+        />
+      )}
+
       {/* HEADER */}
       <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
         <div 
@@ -115,9 +140,21 @@ const Navigation: FC<NavigationProps> = () => {
           <img src={AstraLogo} alt="ASTRA RP" />
         </div>
 
+        {/* Бургер меню для мобильных */}
+        <button 
+          className={`burger-menu ${isMobileMenuOpen ? "open" : ""}`}
+          onClick={toggleMobileMenu}
+          aria-label="Меню"
+          type="button"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
         {/* Навигация показывается ТОЛЬКО на секции hero */}
         {showHeaderNav && (
-          <div className="nav-links">
+          <div className={`nav-links ${isMobileMenuOpen ? "open" : ""}`}>
             <a
               href="#hero"
               className={activeSection === "hero" ? "active" : ""}
@@ -146,6 +183,10 @@ const Navigation: FC<NavigationProps> = () => {
               href="https://forum.astra-rp.fun"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                document.body.style.overflow = '';
+              }}
             >
               <Newspaper size={18} />
               Форум
@@ -154,14 +195,30 @@ const Navigation: FC<NavigationProps> = () => {
               href="https://t.me/astrarp5"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                document.body.style.overflow = '';
+              }}
             >
               <MessageCircle size={18} />
               Discord
             </a>
+            <button 
+              className="donate-btn mobile" 
+              onClick={() => {
+                handleDonateClick();
+                setIsMobileMenuOpen(false);
+                document.body.style.overflow = '';
+              }}
+              type="button"
+            >
+              <Gem size={18} />
+              Пополнить счёт
+            </button>
           </div>
         )}
 
-        {/* Кнопка "Пополнить счёт" — всегда видна */}
+        {/* Кнопка "Пополнить счёт" — всегда видна на десктопе */}
         <button 
           className="donate-btn desktop" 
           onClick={handleDonateClick}
@@ -184,6 +241,7 @@ const App: FC<AppProps> = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/donate" element={<DonatePage />} />
+        <Route path="/legal/:page?" element={<LegalPage />} />
       </Routes>
     </div>
   );

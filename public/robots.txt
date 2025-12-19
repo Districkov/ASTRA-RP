@@ -1,0 +1,56 @@
+# robots.txt для ASTRA RP
+# https://astra-rp.fun/robots.txt
+
+User-agent: *
+Allow: /
+
+# Разрешаем индексацию всех страниц
+Allow: /donate
+Allow: /legal
+Allow: /legal/offer
+Allow: /legal/privacy
+Allow: /legal/delivery
+
+# Запрещаем индексацию служебных файлов и папок
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /*.json$
+Disallow: /*?*
+
+# Разрешаем индексацию изображений и ресурсов
+Allow: /assets/
+Allow: /*.jpg$
+Allow: /*.png$
+Allow: /*.svg$
+Allow: /*.mp4$
+Allow: /*.webp$
+
+# Указываем расположение sitemap
+Sitemap: https://astra-rp.fun/sitemap.xml
+
+# Специальные правила для поисковых систем
+User-agent: Googlebot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+
+# Блокируем плохих ботов
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+
+
+
