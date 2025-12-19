@@ -14,12 +14,8 @@ function TermsOfService() {
         <div className="legal-header">
           <h1>Пользовательское соглашение</h1>
           <p className="legal-subtitle">ASTRA-RP</p>
-<<<<<<< HEAD
-        </div>Последнее обновление: {new Date().toLocaleDateString('ru-RU')}</p
-=======
         </div>
         <p className="last-updated">Последнее обновление: {new Date().toLocaleDateString('ru-RU')}</p>
->>>>>>> da6e44e97ceaf22549741662e0ecc8b060573a5a
 
         <section className="important-notice">
           <p><strong>⚠️ ВАЖНО:</strong> Прочитайте это соглашение внимательно. Используя ASTRA-RP, вы принимаете ВСЕ условия.</p>

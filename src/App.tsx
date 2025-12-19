@@ -4,13 +4,9 @@ import "./App.css";
 import AstraLogo from "./assets/Astra.svg";
 import HomePage from "./pages/HomePage";
 import DonatePage from "./pages/DonatePage";
-<<<<<<< HEAD
-import LegalPage from "./pages/LegalPage";
-=======
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import OfferAgreement from "./pages/OfferAgreement";
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 import {
   Home,
   Info,
