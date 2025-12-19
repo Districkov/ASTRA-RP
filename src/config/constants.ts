@@ -44,9 +44,9 @@ export const PAYMENT_METHODS = [
 
 export const CONTACT_INFO = {
   EMAIL: {
-    PRIVACY: 'privacy@astra-rp.ru',
-    SUPPORT: 'support@astra-rp.ru',
-    OFFERS: 'offers@astra-rp.ru',
+    PRIVACY: 'support@astra-rp.fun',
+    SUPPORT: 'support@astra-rp.fun',
+    OFFERS: 'support@astra-rp.fun',
   },
   
   SOCIAL: {
@@ -65,6 +65,8 @@ export const CONTACT_INFO = {
     CONNECT_COMMAND: 'connect astrapp.com',
     DISPLAY_ADDRESS: 'astrapp.com',
   },
+  
+  PHONE: '+7 (926) 718-55-52',
 } as const;
 
 // ============================================
