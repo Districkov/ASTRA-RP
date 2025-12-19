@@ -2067,7 +2067,9 @@ html, body, #root {
     padding: 2rem 1.5rem;
   }
 
-
+  .unique-feature-card h3 {
+    font-size: 1.25rem;
+  }
 
   .gallery-section {
     display: none;
