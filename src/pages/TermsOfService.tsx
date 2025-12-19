@@ -15,7 +15,7 @@ function TermsOfService() {
         <div className="legal-header">
           <h1>Пользовательское соглашение</h1>
           <p className="legal-subtitle">ASTRA-RP</p>
-        </div>ssName="last-updated">Последнее обновление: {new Date().toLocaleDateString('ru-RU')}</p>
+        </div>Последнее обновление: {new Date().toLocaleDateString('ru-RU')}</p>
 
         <section className="important-notice">
         <section className="important-notice">
