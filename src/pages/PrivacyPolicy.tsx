@@ -12,7 +12,6 @@ function PrivacyPolicy() {
 
       <div className="legal-content">
         <div className="legal-header">
-          <Shield size={40} />
           <h1>Политика конфиденциальности</h1>
           <p className="legal-subtitle">ASTRA-RP</p>
         </div>
