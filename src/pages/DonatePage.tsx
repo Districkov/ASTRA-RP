@@ -2,29 +2,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DonatePage.css";
-<<<<<<< HEAD
-import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, Loader2, AlertCircle, X } from 'lucide-react';
-=======
 import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, Loader2, AlertCircle, X, AlertTriangle } from 'lucide-react';
 import AstraLogo from "./../assets/astra.png";
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 import DiscordIcon from "./../assets/DS.svg";
 import VkIcon from "./../assets/Vk.svg";
 import YoutubeIcon from "./../assets/Youtobe.svg";
 import TelegramIcon from "./../assets/telega.svg";
 
-<<<<<<< HEAD
-// Типы для ответа API
-interface PaymentResponse {
-  success: boolean;
-  paymentId?: string;
-  paymentUrl?: string;
-  orderId?: string;
-  environment?: string;
-  error?: string;
-  details?: string;
-  errorCode?: string;
-=======
 // Интерфейсы валидации
 interface ValidationError {
   field: string;
@@ -36,7 +20,6 @@ interface DonateFormData {
   username: string;
   amount: number;
   paymentMethod: string;
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 }
 
 function DonatePage() {
@@ -54,77 +37,9 @@ function DonatePage() {
 
   const exchangeRate = "1₽ = 2$ = 300 игровой валюты";
 
-<<<<<<< HEAD
-  // Конфигурация API для Vercel - ИСПРАВЛЕННЫЙ ENDPOINT
-  const API_CONFIG = {
-    baseUrl: 'https://astra-rp-backend.vercel.app/api',
-    endpoints: {
-      payment: '/payment', // Правильный endpoint
-    }
-  };
-
-  // Функция для отправки платежа в API
-  const processPayment = async (paymentData: any): Promise<PaymentResponse> => {
-    try {
-      console.log('🔄 Отправка запроса к Vercel API:', `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.payment}`);
-      
-      const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.payment}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentData),
-      });
-
-      console.log('📊 Статус ответа:', response.status, response.statusText);
-
-      if (!response.ok) {
-        let errorText = '';
-        try {
-          const errorData = await response.json();
-          errorText = JSON.stringify(errorData);
-        } catch {
-          errorText = await response.text();
-        }
-        
-        console.error('❌ Ошибка API:', response.status, errorText);
-        
-        if (response.status === 500) {
-          throw new Error('Внутренняя ошибка сервера платежной системы. Попробуйте позже.');
-        } else {
-          throw new Error(`Ошибка сервера: ${response.status}`);
-        }
-      }
-
-      const result = await response.json();
-      console.log('✅ Ответ от Vercel API:', result);
-      return result;
-
-    } catch (error) {
-      console.error('🔥 Payment API error:', error);
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error('Не удалось подключиться к платежной системе. Проверьте соединение и попробуйте позже.');
-      }
-    }
-  };
-
-  const handlePayment = async () => {
-    // Валидация
-    if (!email || !username || !agreeTerms || !agreePrivacy) {
-      setPaymentStatus({
-        type: 'error',
-        message: 'Заполните все обязательные поля и согласия!'
-      });
-      setTimeout(() => setPaymentStatus({ type: null, message: '' }), 5000);
-      return;
-    }
-=======
   // Расширенная валидация
   const validateForm = (formData: DonateFormData): ValidationError[] => {
     const errors: ValidationError[] = [];
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 
     // Email валидация
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -218,25 +133,6 @@ function DonatePage() {
       // Вызов реального платежного API
       const result = await processPayment(paymentData);
       
-<<<<<<< HEAD
-      if (result.success && result.paymentUrl) {
-        setPaymentStatus({
-          type: 'success',
-          message: `Платеж на сумму ${amount}₽ успешно создан! Перенаправляем на страницу оплаты Т-Банка...`
-        });
-
-        // Редирект на платежный шлюз Т-Банка
-        setTimeout(() => {
-          console.log('🔗 Перенаправление на:', result.paymentUrl);
-          window.location.href = result.paymentUrl!;
-        }, 2000);
-
-      } else {
-        const errorMessage = result.error || result.details || 'Неизвестная ошибка при создании платежа';
-        console.error('❌ Ошибка платежа:', errorMessage);
-        throw new Error(errorMessage);
-      }
-=======
       // Расчет игровой валюты
       const gameBalance = amount * 300;
       
@@ -257,7 +153,6 @@ function DonatePage() {
         setPaymentStatus({ type: null, message: '' });
         setValidationErrors([]);
       }, 5000);
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
 
     } catch (error) {
       console.error('💥 Payment processing error:', error);
@@ -426,11 +321,7 @@ function DonatePage() {
                     required
                   />
                   <span className="checkmark"></span>
-<<<<<<< HEAD
-                  Принимаю условия <a href="#" className="link">пользовательского соглашения</a> *
-=======
                   Я прочитал и согласен с <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="link">Пользовательским соглашением</a>
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
                 </label>
 
                 <label className="checkbox-label">
@@ -441,10 +332,6 @@ function DonatePage() {
                     required
                   />
                   <span className="checkmark"></span>
-<<<<<<< HEAD
-                  Согласен на обработку персональных данных, в порядке, на условиях и в объёме, 
-                  указанной в согласии, текст которого прочитан мною полностью *
-=======
                   Я согласен с <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="link">Политикой конфиденциальности</a> и даю согласие на обработку моих персональных данных
                 </label>
 
@@ -456,7 +343,6 @@ function DonatePage() {
                   />
                   <span className="checkmark"></span>
                   Я ознакомлен с <a href="/offer-agreement" target="_blank" rel="noopener noreferrer" className="link">Публичной офертой</a> и принимаю условия оказания услуг
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
                 </label>
               </div>
 
@@ -539,31 +425,6 @@ function DonatePage() {
         </div>
       </div>
 
-<<<<<<< HEAD
-      {/* Футер */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <div className="footer-logo">ASTRA RP</div>
-              <p className="footer-description">
-                Ведущий ролевой проект GTA V с 2023 года. 
-                Мы создаём уникальный игровой опыт для каждого участника нашего сообщества.
-              </p>
-              <div className="social-links">
-                <a href="https://discord.gg/astra-rp" className="social-icon" title="Discord" target="_blank" rel="noopener noreferrer">
-                  <img src={DiscordIcon} alt="Discord" />
-                </a>
-                <a href="https://vk.com/astra-rp" className="social-icon" title="VK" target="_blank" rel="noopener noreferrer">
-                  <img src={VkIcon} alt="VKontakte" />
-                </a>
-                <a href="https://youtube.com/astra-rp" className="social-icon" title="YouTube" target="_blank" rel="noopener noreferrer">
-                  <img src={YoutubeIcon} alt="YouTube" />
-                </a>
-                <a href="https://t.me/astra-rp" className="social-icon" title="Telegram" target="_blank" rel="noopener noreferrer">
-                  <img src={TelegramIcon} alt="Telegram" />
-                </a>
-=======
      <footer className="footer">
             <div className="footer-container">
               <div className="footer-content">
@@ -635,7 +496,6 @@ function DonatePage() {
                   <div className="badge">RP</div>
                   <div className="badge">GTA V</div>
                 </div>
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
               </div>
             </div>
 
