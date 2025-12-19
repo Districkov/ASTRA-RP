@@ -243,13 +243,9 @@ const App: FC<AppProps> = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/donate" element={<DonatePage />} />
-<<<<<<< HEAD
-        <Route path="/legal/:page?" element={<LegalPage />} />
-=======
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/offer-agreement" element={<OfferAgreement />} />
->>>>>>> f16f0afe5dbd959c5d6e093b7b78aad7c14252f6
       </Routes>
     </div>
   );
