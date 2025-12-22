@@ -1,6 +1,6 @@
 // ========== src/pages/DonatePage.tsx ==========
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./DonatePage.css";
 import { CreditCard, Mail, User, DollarSign, Shield, CheckCircle2, Loader2, AlertCircle, X, AlertTriangle } from 'lucide-react';
 import AstraLogo from "./../assets/astra.png";
@@ -320,7 +320,7 @@ function DonatePage() {
                     required
                   />
                   <span className="checkmark"></span>
-                  Я прочитал и согласен с <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="link">Пользовательским соглашением</a>
+                  Я прочитал и согласен с <Link to="/terms-of-service" className="link">Пользовательским соглашением</Link>
                 </label>
 
                 <label className="checkbox-label">
@@ -331,7 +331,7 @@ function DonatePage() {
                     required
                   />
                   <span className="checkmark"></span>
-                  Я согласен с <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="link">Политикой конфиденциальности</a> и даю согласие на обработку моих персональных данных
+                  Я согласен с <Link to="/privacy-policy" className="link">Политикой конфиденциальности</Link> и даю согласие на обработку моих персональных данных
                 </label>
 
                 <label className="checkbox-label">
@@ -341,7 +341,7 @@ function DonatePage() {
                     onChange={(e) => setAgreeOffer(e.target.checked)}
                   />
                   <span className="checkmark"></span>
-                  Я ознакомлен с <a href="/offer-agreement" target="_blank" rel="noopener noreferrer" className="link">Публичной офертой</a> и принимаю условия оказания услуг
+                  Я ознакомлен с <Link to="/offer-agreement" className="link">Публичной офертой</Link> и принимаю условия оказания услуг
                 </label>
               </div>
 
@@ -474,9 +474,9 @@ function DonatePage() {
                 <h4>Правовая информация</h4>
                 <ul className="footer-links">
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
-                  <li><a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a></li>
-                  <li><a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a></li>
-                  <li><a href="/offer-agreement" target="_blank" rel="noopener noreferrer">Публичная оферта</a></li>
+                  <li><Link to="/privacy-policy">Политика конфиденциальности</Link></li>
+                  <li><Link to="/terms-of-service">Пользовательское соглашение</Link></li>
+                  <li><Link to="/offer-agreement">Публичная оферта</Link></li>
                 </ul>
               </div>
             </div>

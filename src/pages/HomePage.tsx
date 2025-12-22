@@ -25,6 +25,7 @@ import {
   Briefcase,
   Gem
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import backgroundVideo from "../assets/Start.mp4";
 import AstraLogo from "../assets/astra.png";
 import DiscordIcon from "../assets/DS.svg";
@@ -763,15 +764,15 @@ function HomePage() {
                 <h3>Где найти правовую информацию?</h3>
                 <p>
                   Ознакомиться с нашей 
-                  <a href="/privacy-policy" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
+                  <Link to="/privacy-policy" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
                     политикой конфиденциальности
-                  </a>,
-                  <a href="/terms-of-service" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
+                  </Link>,
+                  <Link to="/terms-of-service" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
                     пользовательским соглашением
-                  </a> и 
-                  <a href="/offer-agreement" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
+                  </Link> и 
+                  <Link to="/offer-agreement" style={{color: '#ff1e1e', textDecoration: 'none', fontWeight: '600', margin: '0 4px'}}>
                     публичной офертой
-                  </a>
+                  </Link>
                   вы можете в соответствующих разделах.
                 </p>
               </div>
@@ -883,9 +884,9 @@ function HomePage() {
                 <h4>Правовая информация</h4>
                 <ul className="footer-links">
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
-                  <li><a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a></li>
-                  <li><a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a></li>
-                  <li><a href="/offer-agreement" target="_blank" rel="noopener noreferrer">Публичная оферта</a></li>
+                  <li><Link to="/privacy-policy">Политика конфиденциальности</Link></li>
+                  <li><Link to="/terms-of-service">Пользовательское соглашение</Link></li>
+                  <li><Link to="/offer-agreement">Публичная оферта</Link></li>
                 </ul>
               </div>
             </div>
