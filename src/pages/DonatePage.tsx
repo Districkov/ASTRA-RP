@@ -133,6 +133,7 @@ function DonatePage() {
       
       // Вызов реального платежного API
       const result = await processPayment(paymentData);
+      console.log('💳 Результат платежа:', result);
       
       // Расчет игровой валюты
       const gameBalance = amount * 300;
