@@ -8,6 +8,7 @@ import DiscordIcon from "./../assets/DS.svg";
 import VkIcon from "./../assets/Vk.svg";
 import YoutubeIcon from "./../assets/Youtobe.svg";
 import TelegramIcon from "./../assets/telega.svg";
+import { processPayment } from "../services/paymentService";
 
 // Интерфейсы валидации
 interface ValidationError {
@@ -427,75 +428,26 @@ function DonatePage() {
 
       <footer className="footer">
         <div className="footer-container">
-              <div className="footer-content">
-                <div className="footer-brand">
-                  <img src={AstraLogo} alt="ASTRA RP" className="footer-logo" />
-                  <p className="footer-description">
-                    Ведущий ролевой проект GTA V с 2023 года. 
-                    Мы создаём уникальный игровой опыт для каждого участника нашего сообщества.
-                  </p>
-                  <div className="social-links">
-                    <a href="https://discord.gg/astra-rp" className="social-icon" title="Discord" target="_blank" rel="noopener noreferrer">
-                      <img src={DiscordIcon} alt="Discord" />
-                    </a>
-                    <a href="https://vk.com/astra-rp" className="social-icon" title="VK" target="_blank" rel="noopener noreferrer">
-                      <img src={VkIcon} alt="VKontakte" />
-                    </a>
-                    <a href="https://youtube.com/astra-rp" className="social-icon" title="YouTube" target="_blank" rel="noopener noreferrer">
-                      <img src={YoutubeIcon} alt="YouTube" />
-                    </a>
-                    <a href="https://t.me/astra-rp" className="social-icon" title="Telegram" target="_blank" rel="noopener noreferrer">
-                      <img src={TelegramIcon} alt="Telegram" />
-                    </a>
-                  </div>
-                </div>
-
-                <div className="footer-links-group">
-                  <div className="footer-column">
-                    <h4>Навигация</h4>
-                    <ul className="footer-links">
-                      <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }}>Главная</a></li>
-                      <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>О проекте</a></li>
-                      <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToSection('how-to-play'); }}>Как играть</a></li>
-                      <li><a href="#" onClick={(e) => { e.preventDefault(); navigate('/donate'); }}>Донат</a></li>
-                    </ul>
-                  </div>
-
-                  <div className="footer-column">
-                    <h4>Сообщество</h4>
-                    <ul className="footer-links">
-                      <li><a href="https://discord.gg/astra-rp" target="_blank" rel="noopener noreferrer">Discord сервер</a></li>
-                      <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Форум</a></li>
-                      <li><a href="#">База знаний</a></li>
-                      <li><a href="#">Поддержка</a></li>
-                    </ul>
-                  </div>
-
-                  <div className="footer-column">
-                    <h4>Правовая информация</h4>
-                    <ul className="footer-links">
-                      <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
-                      <li><a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a></li>
-                      <li><a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a></li>
-                      <li><a href="/offer-agreement" target="_blank" rel="noopener noreferrer">Публичная оферта</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div className="footer-bottom">
-                <div className="footer-copyright">
-                  <p>&copy; 2025 ASTRA RP. Все права защищены.</p>
-                  <p className="footer-disclaimer">
-                    ASTRA RP не связан с Rockstar Games, Take-Two Interactive или RAGE MP. 
-                    Все торговые марки принадлежат их правообладателям.
-                  </p>
-                </div>
-                <div className="footer-badges">
-                  <div className="badge">18+</div>
-                  <div className="badge">RP</div>
-                  <div className="badge">GTA V</div>
-                </div>
+          <div className="footer-content">
+            <div className="footer-brand">
+              <img src={AstraLogo} alt="ASTRA RP" className="footer-logo" />
+              <p className="footer-description">
+                Ведущий ролевой проект GTA V с 2023 года. 
+                Мы создаём уникальный игровой опыт для каждого участника нашего сообщества.
+              </p>
+              <div className="social-links">
+                <a href="https://discord.gg/WMa32mvWhg" className="social-icon" title="Discord" target="_blank" rel="noopener noreferrer">
+                  <img src={DiscordIcon} alt="Discord" />
+                </a>
+                <a href="https://vk.com/astra-rp" className="social-icon" title="VK" target="_blank" rel="noopener noreferrer">
+                  <img src={VkIcon} alt="VKontakte" />
+                </a>
+                <a href="https://www.youtube.com/@AstraRP-gta5" className="social-icon" title="YouTube" target="_blank" rel="noopener noreferrer">
+                  <img src={YoutubeIcon} alt="YouTube" />
+                </a>
+                <a href="https://t.me/astrarp5" className="social-icon" title="Telegram" target="_blank" rel="noopener noreferrer">
+                  <img src={TelegramIcon} alt="Telegram" />
+                </a>
               </div>
             </div>
 
@@ -513,10 +465,10 @@ function DonatePage() {
               <div className="footer-column">
                 <h4>Сообщество</h4>
                 <ul className="footer-links">
-                  <li><a href="https://discord.gg/astra-rp" target="_blank" rel="noopener noreferrer">Discord сервер</a></li>
+                  <li><a href="https://discord.gg/WMa32mvWhg" target="_blank" rel="noopener noreferrer">Discord сервер</a></li>
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Форум</a></li>
-                  <li><a href="#">База знаний</a></li>
-                  <li><a href="#">Поддержка</a></li>
+                  <li><a href="https://www.youtube.com/@AstraRP-gta5" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+                  <li><a href="https://t.me/astrarp5" target="_blank" rel="noopener noreferrer">Телеграм</a></li>
                 </ul>
               </div>
 
@@ -524,9 +476,9 @@ function DonatePage() {
                 <h4>Правовая информация</h4>
                 <ul className="footer-links">
                   <li><a href="https://forum.astra-rp.fun" target="_blank" rel="noopener noreferrer">Правила сервера</a></li>
-                  <li><a href="#">Политика конфиденциальности</a></li>
-                  <li><a href="#">Пользовательское соглашение</a></li>
-                  <li><a href="#">Контакты</a></li>
+                  <li><a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a></li>
+                  <li><a href="/terms-of-service" target="_blank" rel="noopener noreferrer">Пользовательское соглашение</a></li>
+                  <li><a href="/offer-agreement" target="_blank" rel="noopener noreferrer">Публичная оферта</a></li>
                 </ul>
               </div>
             </div>
