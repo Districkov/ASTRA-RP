@@ -315,7 +315,7 @@ function DonatePage() {
                 <label className="checkbox-label">
                   <input
                     type="checkbox"
-                    checked={agreeTerms}
+                    
                     onChange={(e) => setAgreeTerms(e.target.checked)}
                     required
                   />
