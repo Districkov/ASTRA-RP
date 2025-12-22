@@ -13,10 +13,23 @@ interface PaymentResult {
   message: string;
 }
 
+// API эндпоинт для обработки платежей
+const PAYMENT_API_ENDPOINT = 'http://155.212.189.102:3000/api/tinkoff/callback';
+
+/**
+ * Маппинг способов оплаты на тип платежа для API
+ */
+const paymentMethodMap: { [key: string]: string } = {
+  'card': 'card_rf',
+  'sbp': 'sbp_rf',
+  // 'qiwi': 'qiwi_rf',
+  // 'yoomoney': 'yoomoney_rf',
+  // 'crypto': 'crypto'
+};
+
 /**
  * Обработка платежа
- * В реальном приложении здесь будет интеграция с платежным шлюзом
- * (Т-Банк, YooKassa, Stripe и т.д.)
+ * Отправляет запрос на API эндпоинт с параметрами платежа
  */
 export const processPayment = async (paymentData: PaymentData): Promise<PaymentResult> => {
   try {
@@ -29,30 +42,58 @@ export const processPayment = async (paymentData: PaymentData): Promise<PaymentR
       throw new Error('Не все поля заполнены');
     }
 
-    // Логирование попытки платежа
-    console.log('🔄 Обработка платежа:', {
-      amount: paymentData.amount,
+    // Преобразование способа оплаты в тип платежа для API
+    const paymentType = paymentMethodMap[paymentData.paymentMethod] || 'card_rf';
+
+    // Формирование данных для отправки на API
+    const apiPayload = {
+      payment_type: paymentType,
       email: paymentData.email,
-      username: paymentData.username,
-      paymentMethod: paymentData.paymentMethod,
-      timestamp: new Date().toISOString()
+      login: paymentData.username,
+      amount: paymentData.amount
+    };
+
+    console.log('🔄 Отправка платежных данных на сервер:', {
+      endpoint: PAYMENT_API_ENDPOINT,
+      payload: apiPayload
     });
 
-    // В реальном приложении здесь будет вызов API
-    // Например, для Т-Банка:
-    // const response = await fetch('https://api.tbank.ru/payment', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_TOKEN' },
-    //   body: JSON.stringify(paymentData)
-    // });
+    // Отправка запроса на API
+    const response = await fetch(PAYMENT_API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(apiPayload)
+    });
 
-    // Для демонстрации - имитируем успешный платеж
-    const transactionId = `ASTRA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Проверка статуса ответа
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+    }
+
+    // Получение результата от API
+    const result = await response.json();
+
+    // Проверка успешности платежа в ответе
+    if (!result.success && !result.transactionId) {
+      throw new Error(result.message || 'Ошибка при обработке платежа на сервере');
+    }
+
+    const transactionId = result.transactionId || `ASTRA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    console.log('✅ Платеж успешно обработан:', {
+      transactionId,
+      amount: paymentData.amount,
+      email: paymentData.email
+    });
 
     return {
       success: true,
       transactionId,
-      message: `Платеж успешно обработан. ID транзакции: ${transactionId}`
+      message: result.message || `Платеж успешно обработан. ID транзакции: ${transactionId}`
     };
 
   } catch (error) {
@@ -67,12 +108,30 @@ export const processPayment = async (paymentData: PaymentData): Promise<PaymentR
  */
 export const checkPaymentStatus = async (transactionId: string): Promise<{ status: string; message: string }> => {
   try {
-    // В реальном приложении здесь будет запрос к API
+    if (!transactionId) {
+      throw new Error('ID транзакции не указан');
+    }
+
+    const statusEndpoint = `${PAYMENT_API_ENDPOINT}/status/${transactionId}`;
     console.log('🔍 Проверка статуса платежа:', transactionId);
 
+    const response = await fetch(statusEndpoint, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+
+    const result = await response.json();
+
     return {
-      status: 'completed',
-      message: 'Платеж успешно завершен'
+      status: result.status || 'unknown',
+      message: result.message || 'Платеж обрабатывается'
     };
 
   } catch (error) {
@@ -91,18 +150,36 @@ export const refundPayment = async (transactionId: string, reason: string): Prom
       throw new Error('Укажите ID транзакции и причину возврата');
     }
 
-    console.log('💰 Обработка возврата:', {
+    const refundPayload = {
       transactionId,
       reason,
       timestamp: new Date().toISOString()
+    };
+
+    const refundEndpoint = `${PAYMENT_API_ENDPOINT}/refund`;
+    console.log('💰 Отправка запроса на возврат:', refundPayload);
+
+    const response = await fetch(refundEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(refundPayload)
     });
 
-    // В реальном приложении здесь будет вызов API возврата
-    const refundId = `REFUND-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    const refundId = result.refundId || `REFUND-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    console.log('✅ Возврат успешно инициирован:', refundId);
 
     return {
       refundId,
-      message: `Возврат успешно инициирован. ID возврата: ${refundId}`
+      message: result.message || `Возврат успешно инициирован. ID возврата: ${refundId}`
     };
 
   } catch (error) {

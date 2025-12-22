@@ -178,10 +178,7 @@ function DonatePage() {
 
   const paymentMethods = [
     { id: 'card', label: 'Банковская карта' },
-    { id: 'sbp', label: 'СБП' },
-    { id: 'qiwi', label: 'QIWI' },
-    { id: 'yoomoney', label: 'ЮMoney' },
-    { id: 'crypto', label: 'Криптовалюта' }
+    { id: 'sbp', label: 'СБП' }
   ];
 
   return (
