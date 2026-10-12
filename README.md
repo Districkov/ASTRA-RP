@@ -1,75 +1,99 @@
-# React + TypeScript + Vite
+# ASTRA-RP — сайт проекта
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-6-CA4245?style=flat-square&logo=react-router&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-9-4B32C3?style=flat-square&logo=eslint&logoColor=white)
 
-Currently, two official plugins are available:
+Клиентское SPA на **React 19 + TypeScript + Vite**: главная страница проекта,
+поддержка проекта (донаты), юридические документы и интеграция платежей.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 **Демо:** https://astra-rp.vercel.app
 
-## React Compiler
+## ✨ Возможности
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- 🏠 **Главная страница** проекта с блоками презентации
+- 💳 **Страница поддержки проекта** с интеграцией платежей
+- 📄 **Юридические документы** отдельными маршрутами: оферта, политика конфиденциальности, условия использования
+- 🧭 **Клиентская маршрутизация** через React Router без перезагрузок
+- 🎨 **Иконки** lucide-react и собственные стили
+- ⚡ **Сборка на Vite 7** с включённым **React Compiler**
+- 🌍 **Деплой на Vercel**
 
-Note: This will impact Vite dev & build performances.
+## 🛠 Стек
 
-## Expanding the ESLint configuration
+| Слой | Технологии |
+|------|-----------|
+| UI | React 19, React DOM 19 |
+| Язык | TypeScript 5.9 |
+| Маршрутизация | react-router-dom 6 |
+| Сборка | Vite 7, `@vitejs/plugin-react`, **React Compiler** |
+| Иконки | lucide-react |
+| Стили | CSS |
+| Качество | ESLint 9, typescript-eslint |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📁 Структура проекта
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+ASTRA-RP/
+├── public/                       # статика
+├── src/
+│   ├── assets/                   # изображения и ресурсы
+│   ├── config/                   # конфигурация приложения
+│   ├── pages/                    # страницы-маршруты
+│   │   ├── HomePage.tsx          # главная
+│   │   ├── DonatePage.tsx        # поддержка проекта
+│   │   ├── OfferAgreement.tsx    # публичная оферта
+│   │   ├── PrivacyPolicy.tsx     # политика конфиденциальности
+│   │   └── TermsOfService.tsx    # условия использования
+│   ├── services/
+│   │   └── paymentService.ts     # работа с платежами
+│   ├── styles/                   # стили
+│   ├── App.tsx                   # корневой компонент и роутинг
+│   ├── main.tsx                  # точка входа
+│   ├── App.css
+│   └── index.css
+├── index.html
+├── vite.config.ts
+├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+├── eslint.config.js
+├── DOCUMENTATION.md              # документация проекта
+├── QUICKSTART.md                 # быстрый старт
+└── SUMMARY.md                    # краткое описание
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📜 Скрипты
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Команда | Что делает |
+|---------|-----------|
+| `npm run dev` | Dev-сервер Vite с HMR |
+| `npm run build` | Проверка типов (`tsc -b`) + прод-сборка |
+| `npm run preview` | Локальный предпросмотр собранной версии |
+| `npm run lint` | Проверка ESLint |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Запуск
+
+```bash
+npm install
+npm run dev       # http://localhost:5173
 ```
+
+Прод-сборка:
+
+```bash
+npm run build
+npm run preview
+```
+
+## 🧠 Что демонстрирует проект
+
+- **Современный стек React:** React 19 + React Compiler — автоматическая мемоизация без ручных `useMemo`
+- **Клиентская маршрутизация** с отдельными страницами и юридическими документами
+- **Слой сервисов** (`services/`) — обращения к платежному API вынесены из компонентов
+- **Разделение конфигурации:** настройки приложения в `src/config/`
+- **Строгая типизация** и проверка типов в CI-шаге сборки (`tsc -b` перед `vite build`)
+
+## 👤 Автор
+
+Иван Соломин — [github.com/Districkov](https://github.com/Districkov)
